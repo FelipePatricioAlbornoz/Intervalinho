@@ -4,13 +4,14 @@ import storage from './assets/services/storage';
 
 export default function App() {
   useEffect(() => {
-    // inicializa dados seed na primeira execução
+    // Segundo a desgraça da documentação do React, esse é o jeito certo de usar async/await dentro do useEffect
+
     (async () => {
       try {
         await storage.initFromSeed();
-        // console.log('seed initialized');
+
       } catch (err) {
-        // console.warn('seed init failed', err);
+
       }
     })();
   }, []);
