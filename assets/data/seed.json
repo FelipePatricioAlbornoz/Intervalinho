@@ -1,0 +1,24 @@
+{
+  "students": [
+    {
+      "id": "s1",
+      "name": "João Silva",
+      "matricula": "2025001"
+    },
+    {
+      "id": "s2",
+      "name": "Maria Souza",
+      "matricula": "2025002"
+    },
+    {
+      "id": "s3",
+      "name": "Pedro Oliveira",
+      "matricula": "2025003"
+    }
+  ],
+  "settings": {
+    "schoolCoords": { "lat": -27.5945, "lng": -48.5586 },
+    "intervalStart": "12:30",
+    "intervalEnd": "13:00"
+  }
+}

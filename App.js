@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import storage from './assets/services/storage';
 
 export default function App() {
+  useEffect(() => {
+    // inicializa dados seed na primeira execução
+    (async () => {
+      try {
+        await storage.initFromSeed();
+        // console.log('seed initialized');
+      } catch (err) {
+        // console.warn('seed init failed', err);
+      }
+    })();
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Intervalinho</Text>
