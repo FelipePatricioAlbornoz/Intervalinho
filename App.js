@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet } from 'react-native';
 import storage from './assets/services/storage';
-import AppHeader from './assets/components/AppHeader';
-import CenteredCard from './assets/components/CenteredCard';
-import theme from './assets/constants/theme';
+import AppHeader from './assets/screens/AppHeader';
+import CenteredCard from './assets/screens/CenteredCard';
+import theme from './theme';
 import { AuthProvider } from './assets/context/AuthContext';
 import AppNavigation from './assets/navigation';
 
@@ -14,7 +14,7 @@ export default function App() {
       try {
         await storage.initFromSeed();
       } catch (err) {
-
+        
       }
     })();
   }, []);
