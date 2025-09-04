@@ -5,7 +5,7 @@ import theme from '../constants/theme';
 export default function SplashScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
-      <Text style={styles.title}>Nome do app</Text>
+      <Text style={styles.title}>Intervalinho</Text>
     </View>
   );
 }

@@ -8,13 +8,14 @@ export default function CenteredCard({ children, style }) {
 
 const styles = StyleSheet.create({
   card: {
-    width: '90%',
-    backgroundColor: theme.colors.surface,
-    padding: 16,
+  width: '92%',
+  backgroundColor: theme.colors.surface,
+  padding: 20,
   borderRadius: theme.radius.md,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4
+  shadowColor: '#000',
+  shadowOpacity: 0.06,
+  shadowOffset: { width: 0, height: 6 },
+  shadowRadius: 12,
+  elevation: 3
   }
 });

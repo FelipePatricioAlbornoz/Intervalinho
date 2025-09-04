@@ -21,35 +21,35 @@ export default function LoginScreen() {
 		}
 	};
 
-	return (
-		<View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-			<Text style={styles.header}>Nome do app</Text>
-			<Text style={styles.hint}>Insira seu login</Text>
+		return (
+			<View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+				<Text style={styles.header}>Intervalinho</Text>
+				<Text style={styles.hint}>Insira seu login</Text>
 
-			<View style={styles.form}>
-				<TextInput
-					placeholder="Digite sua matrícula ou código"
-					placeholderTextColor="#9aa0a6"
-					value={matricula}
-					onChangeText={setMatricula}
-					style={styles.input}
-					autoCapitalize="none"
-				/>
-				<TextInput
-					placeholder="Digite sua senha"
-					placeholderTextColor="#9aa0a6"
-					value={password}
-					secureTextEntry
-					onChangeText={setPassword}
-					style={styles.input}
-				/>
+				<View style={styles.form}>
+					<TextInput
+						placeholder="Digite sua matrícula ou código"
+						placeholderTextColor={theme.colors.muted}
+						value={matricula}
+						onChangeText={setMatricula}
+						style={styles.input}
+						autoCapitalize="none"
+					/>
+					<TextInput
+						placeholder="Digite sua senha"
+						placeholderTextColor={theme.colors.muted}
+						value={password}
+						secureTextEntry
+						onChangeText={setPassword}
+						style={styles.input}
+					/>
 
-				<TouchableOpacity onPress={onContinue} style={styles.button} disabled={loading}>
-					<Text style={styles.buttonText}>{loading ? 'Entrando...' : 'Continuar'}</Text>
-				</TouchableOpacity>
+					<TouchableOpacity onPress={onContinue} style={styles.button} disabled={loading}>
+						<Text style={styles.buttonText}>{loading ? 'Entrando...' : 'Continuar'}</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
-		</View>
-	);
+		);
 }
 
 const styles = StyleSheet.create({
