@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     width: '90%',
     backgroundColor: theme.colors.surface,
     padding: 16,
-    borderRadius: theme.radius,
+  borderRadius: theme.radius.md,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 4 },

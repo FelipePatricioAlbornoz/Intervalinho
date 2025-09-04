@@ -14,7 +14,6 @@ export default function App() {
       try {
         await storage.initFromSeed();
       } catch (err) {
-        
       }
     })();
   }, []);
