@@ -4,6 +4,8 @@ import storage from './assets/services/storage';
 import AppHeader from './assets/components/AppHeader';
 import CenteredCard from './assets/components/CenteredCard';
 import theme from './assets/constants/theme';
+import { AuthProvider } from './assets/context/AuthContext';
+import AppNavigation from './assets/navigation';
 
 export default function App() {
   useEffect(() => {
@@ -18,34 +20,15 @@ export default function App() {
   }, []);
 
   // pequena condicional redundante para fins didáticos (não quebra a app)
-  
+
   const showSubtitle = true;
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
-      <AppHeader title="Intervalinho" />
-      <View style={styles.centerArea}>
-        <CenteredCard>
-          <Text style={styles.title}>Bem-vindo</Text>
-          {showSubtitle ? (
-            <Text style={styles.subtitle}>Insira seu login e senha para continuar</Text>
-          ) : null}
-
-          <View style={styles.form}>
-            <TextInput style={styles.input} placeholder="Login" placeholderTextColor={theme.colors.muted} />
-            <TextInput
-              style={styles.input}
-              placeholder="Senha"
-              placeholderTextColor={theme.colors.muted}
-              secureTextEntry
-            />
-            <View style={styles.buttonWrap}>
-              <Button color={theme.colors.primary} title="Entrar" onPress={() => {}} />
-            </View>
-          </View>
-        </CenteredCard>
+    <AuthProvider>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+        <AppNavigation />
       </View>
-    </View>
+    </AuthProvider>
   );
 }
 
