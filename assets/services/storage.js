@@ -20,16 +20,14 @@ const initFromSeed = async (force = false) => {
 	if (seed && seed.students) {
 		await write('students', seed.students);
 	} else {
-		await write('students', [{ id: 1, name: 'Aluno Demo', matricula: '2025001' }]);
+		await write('students', [
+			{ id: 1, name: 'Aluno Demo', matricula: '2025001' },
+			{ id: 2, name: 'Maria Silva', matricula: '2025002' },
+			{ id: 3, name: 'João Souza', matricula: '2025003' },
+		]);
 	}
-	await write('students', defaultStudents);
 	await write('meta', { seedApplied: true, ts: Date.now() });
 };
-const defaultStudents = [
-	{ id: 1, name: 'Aluno Demo', matricula: '2025001' },
-	{ id: 2, name: 'Maria Silva', matricula: '2025002' },
-	{ id: 3, name: 'João Souza', matricula: '2025003' },
-]
 
 const getStudents = async () => (await read('students')) || [];
 const getAuth = async () => (await read('auth')) || { user: null };

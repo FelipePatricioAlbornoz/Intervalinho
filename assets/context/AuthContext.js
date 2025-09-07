@@ -8,16 +8,16 @@ export function AuthProvider({ children }) {
 	const [restoring, setRestoring] = useState(true);
 
 	useEffect(() => {
-	//	(async () => {
-	//		try {
-	//			const auth = await storage.getAuth();
-	//			if (auth && auth.user) setUser(auth.user);
-	//		} catch (e) {
-	//			// ignore
-	//		} finally {
-	//			setRestoring(false);
-	//		}
-	//	})();
+			(async () => {
+				try {
+					const auth = await storage.getAuth();
+					if (auth && auth.user) setUser(auth.user);
+				} catch (e) {
+					// ignore
+				} finally {
+					setRestoring(false);
+				}
+			})();
 	}, []);
 
 	const signIn = async (matriculaOrId, password = '') => {

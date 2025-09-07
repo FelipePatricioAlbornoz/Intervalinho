@@ -57,16 +57,16 @@ const styles = StyleSheet.create({
 	header: { fontSize: 26, fontWeight: '700', color: theme.colors.text, marginBottom: 28 },
 	hint: { color: '#444', marginBottom: 16 },
 	form: { width: '86%', alignItems: 'center' },
-	input: {
-		width: '100%',
-		height: 48,
-		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: '#e6e6e6',
-		paddingHorizontal: 500,
-		marginBottom: 30,
-		backgroundColor: '#fff'
-	},
+	   input: {
+			width: '100%',
+			height: 48,
+			borderRadius: 8,
+			borderWidth: 1,
+			borderColor: '#e6e6e6',
+			paddingHorizontal: 16,
+			marginBottom: 30,
+			backgroundColor: '#fff'
+		},
 	button: {
 		width: '100%',
 		height: 44,
