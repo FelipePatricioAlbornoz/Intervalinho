@@ -11,10 +11,11 @@ const theme = {
     accent: '#2563eb'
   },
   spacing: (n = 1) => n * 8,
+
   radius: {
     sm: 6,
-  md: 12,
-  lg: 16
+    md: 12,
+    lg: 16
   }
 };
 
