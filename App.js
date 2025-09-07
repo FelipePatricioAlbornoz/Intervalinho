@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet } from 'react-native';
-import storage from './assets/services/storage';
+// import storage from './assets/services/storage';
 import AppHeader from './assets/screens/AppHeader';
 import CenteredCard from './assets/screens/CenteredCard';
 import theme from './theme';
@@ -10,17 +10,17 @@ import AppNavigation from './assets/navigation';
 export default function App() {
   useEffect(() => {
     // Segundo a desgraça da documentação do React, esse é o jeito certo de usar async/await dentro do useEffect
-    (async () => {
-      try {
-        await storage.initFromSeed();
-      } catch (err) {
-      }
-    })();
+  //  (async () => {
+  //    try {
+  //      await storage.initFromSeed();
+  //    } catch (err) {
+  //    }
+  //  })();
   }, []);
 
   // pequena condicional redundante para fins didáticos (não quebra a app)
 
-  const showSubtitle = true;
+   const showSubtitle = true;
 
   return (
     <AuthProvider>
