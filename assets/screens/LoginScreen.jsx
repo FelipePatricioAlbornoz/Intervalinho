@@ -1,80 +1,51 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import theme from '../constants/theme';
+import React, {useState, useContext} from 'react';
+import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
-export default function LoginScreen() {
-	const [matricula, setMatricula] = useState('');
-	const [password, setPassword] = useState('');
-	const [loading, setLoading] = useState(false);
-	const { signIn } = useContext(AuthContext);
+export default function LoginScreen(){
+  const [matricula,setMatricula] = useState("")
+  const [password,setPassword] = useState("")
+  const [loading,setLoading] = useState(false)
+  const { signIn } = useContext(AuthContext)
 
-	const onContinue = async () => {
-		setLoading(true);
-		try {
-			await signIn(matricula.trim(), password);
-		} catch (e) {
-			// Optionally show an error toast; keep minimal for now
-			console.warn('login failed', e.message || e);
-		} finally {
-			setLoading(false);
-		}
-	};
+  const entrar = () => {
+    setLoading(true)
+    signIn(matricula,password).catch(e=>{
+      console.log("erro",e)
+    }).finally(()=>setLoading(false))
+  }
 
-		return (
-			<View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
-				<Text style={styles.header}>Intervalinho</Text>
-				<Text style={styles.hint}>Insira seu login</Text>
+  return(
+    <View style={{flex:1,alignItems:"center",backgroundColor:"white"}}>
+      <Text style={{fontSize:20,fontWeight:"bold",marginTop:50}}>Nome do app</Text>
+      <Text>Intervalinho</Text>
 
-				<View style={styles.form}>
-					<TextInput
-						placeholder="Digite sua matrícula ou código"
-						placeholderTextColor={theme.colors.muted}
-						value={matricula}
-						onChangeText={setMatricula}
-						style={styles.input}
-						autoCapitalize="none"
-					/>
-					<TextInput
-						placeholder="Digite sua senha"
-						placeholderTextColor={theme.colors.muted}
-						value={password}
-						secureTextEntry
-						onChangeText={setPassword}
-						style={styles.input}
-					/>
+      <TextInput 
+        placeholder="Digite sua matrícula ou código"
+        value={matricula}
+        onChangeText={t=>setMatricula(t)}
+        style={{borderWidth:1,width:"80%",marginTop:20,padding:10,borderRadius:8}}
+      />
 
-					<TouchableOpacity onPress={onContinue} style={styles.button} disabled={loading}>
-						<Text style={styles.buttonText}>{loading ? 'Entrando...' : 'Continuar'}</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
-		);
+      <TextInput 
+        placeholder="Digite sua senha"
+        value={password}
+        secureTextEntry={true}
+        onChangeText={t=>setPassword(t)}
+        style={{borderWidth:1,width:"80%",marginTop:15,padding:10,borderRadius:8}}
+      />
+
+      <TouchableOpacity onPress={entrar} style={{marginTop:15,backgroundColor:"black",padding:12,borderRadius:30,width:"80%",alignItems:"center"}}>
+        <Text style={{color:"white"}}>{loading ? "Entrando..." : "Continuar"}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={()=>Linking.openURL("#")} style={{marginTop:15}}>
+        <Text>Não possui conta? <Text style={{textDecorationLine:"underline",color:"blue"}}>ir para cadastro</Text></Text>
+      </TouchableOpacity>
+
+      <Text style={{fontSize:11,color:"gray",textAlign:"center",marginTop:30,padding:10}}>
+        Ao clicar em continuar, você concorda com os nossos Termos de Serviço e com a Política de Privacidade
+      </Text>
+    </View>
+  )
 }
-
-const styles = StyleSheet.create({
-	container: { flex: 1, alignItems: 'center', paddingTop: 60 },
-	header: { fontSize: 26, fontWeight: '700', color: theme.colors.text, marginBottom: 28 },
-	hint: { color: '#444', marginBottom: 16 },
-	form: { width: '86%', alignItems: 'center' },
-	   input: {
-			width: '100%',
-			height: 48,
-			borderRadius: 8,
-			borderWidth: 1,
-			borderColor: '#e6e6e6',
-			paddingHorizontal: 16,
-			marginBottom: 30,
-			backgroundColor: '#fff'
-		},
-	button: {
-		width: '100%',
-		height: 44,
-		backgroundColor: '#111',
-		borderRadius: 10,
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: 8
-	},
-	buttonText: { color: '#fff', fontWeight: '700' }
-});
