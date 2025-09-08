@@ -17,8 +17,8 @@ export default function LoginScreen(){
 
   return(
     <View style={{flex:1,alignItems:"center",backgroundColor:"white"}}>
-      <Text style={{fontSize:20,fontWeight:"bold",marginTop:50}}>Nome do app</Text>
-      <Text>Intervalinho</Text>
+      <Text style={{fontSize:20,fontWeight:"bold",marginTop:50}}>Intervalinho</Text>
+      <Text>Insira seu login</Text>
 
       <TextInput 
         placeholder="Digite sua matrícula ou código"
