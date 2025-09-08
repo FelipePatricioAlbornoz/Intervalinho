@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
-export default function LoginScreen(){
+export default function LoginScreen({ onRegister }){
   const [matricula,setMatricula] = useState("")
   const [password,setPassword] = useState("")
   const [loading,setLoading] = useState(false)
@@ -39,7 +39,7 @@ export default function LoginScreen(){
         <Text style={{color:"white"}}>{loading ? "Entrando..." : "Continuar"}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={()=>Linking.openURL("#")} style={{marginTop:15}}>
+      <TouchableOpacity onPress={() => onRegister && onRegister()} style={{marginTop:15}}>
         <Text>Não possui conta? <Text style={{textDecorationLine:"underline",color:"blue"}}>ir para cadastro</Text></Text>
       </TouchableOpacity>
 
