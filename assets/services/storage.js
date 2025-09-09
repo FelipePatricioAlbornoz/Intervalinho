@@ -33,7 +33,6 @@ const remove = async (key) => {
 const initFromSeed = async (force = false) => {
   const meta = (await read('meta')) || {};
   if (!force && meta.seedApplied) {
-    // migrate users to secure format if needed
     await migrateUsersToHashed();
     return;
   }
@@ -55,23 +54,19 @@ const initFromSeed = async (force = false) => {
     ]);
   }
 
-  // Build users array with secure hashes
   const students = (await read('students')) || [];
   const users = [];
 
-  // helper to create salted hash
   const toHex = (bytes) => Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
   const hashPassword = async (password, saltHex) => {
     const data = `${saltHex}:${password}`;
     return await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, data);
   };
 
-  // seed admin user
   const adminSalt = toHex(await Random.getRandomBytesAsync(16));
   const adminHash = await hashPassword('admin123', adminSalt);
   users.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
 
-  // seed student users with a default temporary password '1234'
   for (const s of students) {
     const salt = toHex(await Random.getRandomBytesAsync(16));
     const passwordHash = await hashPassword('1234', salt);
@@ -147,7 +142,6 @@ const registerStudent = async ({ name, matricula, password }) => {
   students.push(newStudent);
   await write('students', students);
 
-  // create user with salted hash
   const saltBytes = await Random.getRandomBytesAsync(16);
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
   const passwordHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${saltHex}:${password}`);
