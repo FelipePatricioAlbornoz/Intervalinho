@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Linking } from 'react-native';
 import storage from '../services/storage';
 import { AuthContext } from '../context/AuthContext';
 
@@ -23,11 +23,10 @@ export default function RegisterScreen({ onBack }) {
       // criar registro de aluno, la pass no se usa x ahora
 
       const student = { name, matricula };
-  const created = await storage.addStudent(student);
+      const created = await storage.addStudent(student);
 
-  // login automatico
-
-  await signIn(matricula, '');
+      // login automatico
+      await signIn(matricula, '');
     } catch (e) {
       console.log('erro cadastro', e);
     } finally {
@@ -36,36 +35,125 @@ export default function RegisterScreen({ onBack }) {
   };
 
   return (
-    <View style={{flex:1,alignItems:'center',backgroundColor:'#fff'}}>
-      <Text style={{fontSize:20,fontWeight:'700',marginTop:50}}>Nome do app</Text>
-      <Text style={{marginTop:10}}>Cadastre seu usuario</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Text style={styles.appName}>Nome do app</Text>
+        <Text style={styles.subtitle}>Cadastre seu usuario</Text>
 
-      <TextInput placeholder="Digite seu nome" value={name} onChangeText={setName} style={{borderWidth:1,width:'86%',marginTop:20,padding:12,borderRadius:8}} />
-      <TextInput placeholder="Digite sua matricula ou e-mail" value={matricula} onChangeText={setMatricula} style={{borderWidth:1,width:'86%',marginTop:12,padding:12,borderRadius:8}} />
-      <TextInput placeholder="Digite sua senha" value={password} onChangeText={setPassword} secureTextEntry={true} style={{borderWidth:1,width:'86%',marginTop:12,padding:12,borderRadius:8}} />
+        <TextInput
+          placeholder="Digite seu nome"
+          placeholderTextColor="#9AA0A6"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+        />
 
-      <View style={{flexDirection:'row',width:'86%',justifyContent:'flex-start',marginTop:12}}>
-        <TouchableOpacity onPress={() => setRoleAluno(true)} style={{flexDirection:'row',alignItems:'center'}}>
-          <View style={{width:18,height:18,backgroundColor:roleAluno ? 'black' : '#eee',marginRight:8}} />
-          <Text>Aluno</Text>
+        <TextInput
+          placeholder="Digite sua matricula ou e-mail"
+          placeholderTextColor="#9AA0A6"
+          value={matricula}
+          onChangeText={setMatricula}
+          style={[styles.input, { marginTop: 12 }]}
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          placeholder="Digite sua senha"
+          placeholderTextColor="#9AA0A6"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          style={[styles.input, { marginTop: 12 }]}
+        />
+
+        <View style={styles.rolesRow}>
+          <TouchableOpacity onPress={() => setRoleAluno(true)} style={styles.roleItem} activeOpacity={0.8}>
+            <View style={[styles.checkbox, roleAluno && styles.checkboxChecked]} />
+            <Text style={styles.roleLabel}>Aluno</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setRoleAluno(false)} style={[styles.roleItem, { marginLeft: 24 }]} activeOpacity={0.8}>
+            <View style={[styles.checkbox, !roleAluno && styles.checkboxChecked]} />
+            <Text style={styles.roleLabel}>Admin</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={cadastrar} style={styles.primaryButton} activeOpacity={0.9}>
+          <Text style={styles.primaryButtonText}>{loading ? 'Cadastrando...' : 'Cadastrar'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setRoleAluno(false)} style={{flexDirection:'row',alignItems:'center',marginLeft:20}}>
-          <View style={{width:18,height:18,backgroundColor:!roleAluno ? 'black' : '#eee',marginRight:8}} />
-          <Text>Admin</Text>
-        </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity onPress={cadastrar} style={{marginTop:20,backgroundColor:'black',padding:14,borderRadius:12,width:'86%',alignItems:'center'}}>
-        <Text style={{color:'white'}}>{loading ? 'Cadastrando...' : 'Cadastrar'}</Text>
-      </TouchableOpacity>
+        <View style={styles.loginRow}>
+          <Text style={styles.loginText}>Já tem conta? </Text>
+          <TouchableOpacity onPress={() => onBack && onBack()}>
+            <Text style={styles.loginLink}>(ir para login)</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity onPress={() => onBack && onBack()} style={{marginTop:12}}>
-        <Text>Já tem conta? <Text style={{color:'blue',textDecorationLine:'underline'}}>ir para login</Text></Text>
-      </TouchableOpacity>
+        <View style={styles.divider} />
 
-      <Text style={{fontSize:11,color:'#999',textAlign:'center',marginTop:30,padding:10}}>
-        Ao clicar em continuar, você concorda com os nossos Termos de Serviço e com a Política de Privacidade
-      </Text>
-    </View>
+        <Text style={styles.termsText}>
+          Ao clicar em continuar, você concorda com os nossos
+        </Text>
+        <View style={styles.linksRow}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://example.com/termos')}>
+            <Text style={styles.linkText}>Termos de Serviço</Text>
+          </TouchableOpacity>
+          <Text style={styles.separatorDot}> e </Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://example.com/privacidade')}>
+            <Text style={styles.linkText}>Política de Privacidade</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
+  content: {
+    flexGrow: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
+  appName: { fontSize: 24, fontWeight: '700', color: '#111', marginTop: 32 },
+  subtitle: { marginTop: 28, fontSize: 14, color: '#5F6368' },
+  input: {
+    width: '100%',
+    backgroundColor: '#F5F6F7',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    height: 48,
+    marginTop: 16,
+    color: '#111111',
+  },
+  rolesRow: { flexDirection: 'row', width: '100%', marginTop: 14, alignItems: 'center' },
+  roleItem: { flexDirection: 'row', alignItems: 'center' },
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
+    backgroundColor: '#e5e7eb',
+    marginRight: 8,
+  },
+  checkboxChecked: { backgroundColor: '#111' },
+  roleLabel: { color: '#111' },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#000',
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  loginRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  loginText: { color: '#5F6368' },
+  loginLink: { color: '#1a73e8', textDecorationLine: 'underline' },
+  divider: { width: '100%', height: 1, backgroundColor: '#E9EAEE', marginTop: 20 },
+  termsText: { fontSize: 11, color: '#777', textAlign: 'center', marginTop: 24 },
+  linksRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
+  linkText: { fontSize: 11, color: '#1a73e8', textDecorationLine: 'underline' },
+  separatorDot: { fontSize: 11, color: '#777', marginHorizontal: 4 },
+});
