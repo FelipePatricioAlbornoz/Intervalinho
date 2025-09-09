@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
-import * as Random from 'expo-random';
 
 const read = async (key) => {
   try {
@@ -63,12 +62,12 @@ const initFromSeed = async (force = false) => {
     return await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, data);
   };
 
-  const adminSalt = toHex(await Random.getRandomBytesAsync(16));
+  const adminSalt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
   const adminHash = await hashPassword('admin123', adminSalt);
   users.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
 
   for (const s of students) {
-    const salt = toHex(await Random.getRandomBytesAsync(16));
+    const salt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
     const passwordHash = await hashPassword('1234', salt);
     users.push({ id: s.id, name: s.name, role: 'student', matricula: s.matricula, passwordHash, salt });
   }
@@ -101,12 +100,12 @@ const migrateUsersToHashed = async () => {
 
   const newUsers = [];
   // admin
-  const adminSalt = toHex(await Random.getRandomBytesAsync(16));
+  const adminSalt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
   const adminHash = await hashPassword('admin123', adminSalt);
   newUsers.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
 
   for (const s of students) {
-    const salt = toHex(await Random.getRandomBytesAsync(16));
+    const salt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
     const passwordHash = await hashPassword('1234', salt);
     newUsers.push({ id: s.id, name: s.name, role: 'student', matricula: s.matricula, passwordHash, salt });
   }
@@ -142,7 +141,7 @@ const registerStudent = async ({ name, matricula, password }) => {
   students.push(newStudent);
   await write('students', students);
 
-  const saltBytes = await Random.getRandomBytesAsync(16);
+  const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
   const passwordHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${saltHex}:${password}`);
   users.push({ id: newId, name, role: 'student', matricula, passwordHash, salt: saltHex });
