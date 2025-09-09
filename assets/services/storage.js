@@ -33,5 +33,15 @@ const getStudents = async () => (await read('students')) || [];
 const getAuth = async () => (await read('auth')) || { user: null };
 const setAuth = async (obj) => await write('auth', obj);
 
-export default { initFromSeed, getStudents, getAuth, setAuth };
+const addStudent = async (student) => {
+	const students = (await getStudents()) || [];
+	// gerar id
+	const maxId = students.reduce((m, s) => (s && s.id && s.id > m ? s.id : m), 0);
+	const newId = maxId + 1;
+	const newStudent = { id: newId, ...student };
+	students.push(newStudent);
+	await write('students', students);
+	return newStudent;
+};
 
+export default { initFromSeed, getStudents, getAuth, setAuth, addStudent };
