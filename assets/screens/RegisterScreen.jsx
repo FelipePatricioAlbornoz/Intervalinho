@@ -5,6 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterScreen({ onBack }) {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState(''); // Caso precisemos mais tarde
   const [matricula, setMatricula] = useState('');
   const [password, setPassword] = useState('');
   const [roleAluno, setRoleAluno] = useState(true);
@@ -19,12 +20,12 @@ export default function RegisterScreen({ onBack }) {
     setLoading(true);
     try {
         
-      // criar registro de aluno
+      // criar registro de aluno, la pass no se usa x ahora
 
       const student = { name, matricula };
   const created = await storage.addStudent(student);
 
-  // faça login automaticamente no novo usuário (sem verificação de senha nesta demonstração simples)
+  // login automatico
 
   await signIn(matricula, '');
     } catch (e) {
@@ -44,11 +45,11 @@ export default function RegisterScreen({ onBack }) {
       <TextInput placeholder="Digite sua senha" value={password} onChangeText={setPassword} secureTextEntry={true} style={{borderWidth:1,width:'86%',marginTop:12,padding:12,borderRadius:8}} />
 
       <View style={{flexDirection:'row',width:'86%',justifyContent:'flex-start',marginTop:12}}>
-        <TouchableOpacity onPress={() => setRoleAluno(!roleAluno)} style={{flexDirection:'row',alignItems:'center'}}>
+        <TouchableOpacity onPress={() => setRoleAluno(true)} style={{flexDirection:'row',alignItems:'center'}}>
           <View style={{width:18,height:18,backgroundColor:roleAluno ? 'black' : '#eee',marginRight:8}} />
           <Text>Aluno</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setRoleAluno(!roleAluno)} style={{flexDirection:'row',alignItems:'center',marginLeft:20}}>
+        <TouchableOpacity onPress={() => setRoleAluno(false)} style={{flexDirection:'row',alignItems:'center',marginLeft:20}}>
           <View style={{width:18,height:18,backgroundColor:!roleAluno ? 'black' : '#eee',marginRight:8}} />
           <Text>Admin</Text>
         </TouchableOpacity>

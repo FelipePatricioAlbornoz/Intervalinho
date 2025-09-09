@@ -10,6 +10,7 @@ export default function LoginScreen({ onRegister }){
 
   const entrar = () => {
     setLoading(true)
+    console.log("A senha é:", password) // para ver si llega bien
     signIn(matricula,password).catch(e=>{
       console.log("erro",e)
     }).finally(()=>setLoading(false))
@@ -35,7 +36,7 @@ export default function LoginScreen({ onRegister }){
         style={{borderWidth:1,width:"80%",marginTop:15,padding:10,borderRadius:8}}
       />
 
-      <TouchableOpacity onPress={entrar} style={{marginTop:15,backgroundColor:"black",padding:12,borderRadius:30,width:"80%",alignItems:"center"}}>
+      <TouchableOpacity onPress={entrar} style={{marginTop:20,backgroundColor:"black",padding:12,borderRadius:12,width:"80%",alignItems:"center"}}>
         <Text style={{color:"white"}}>{loading ? "Entrando..." : "Continuar"}</Text>
       </TouchableOpacity>
 
