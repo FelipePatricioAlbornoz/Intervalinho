@@ -21,21 +21,29 @@ export function AuthProvider({ children }) {
 	}, []);
 
 	const signIn = async (matriculaOrId, password = '') => {
-		if (!matriculaOrId) throw new Error('matricula required');
+		if (!matriculaOrId) throw new Error('Matrícula obrigatória');
 
-		const students = await storage.getStudents();
-		const found = (students || []).find(s => s.matricula === matriculaOrId || String(s.id) === String(matriculaOrId));
-
-		if (matriculaOrId === 'admin' && password === 'admin123') {
-			const admin = { id: 'admin', role: 'admin', name: 'Administrador' };
-			setUser(admin);
-			await storage.setAuth({ user: admin });
-			return admin;
+		if (String(matriculaOrId).toLowerCase() === 'admin') {
+			const users = await storage.getUsers();
+			const admin = users.find(u => u.id === 'admin' || (u.role === 'admin' && !u.matricula));
+			if (!admin) throw new Error('Admin não configurado');
+			const ok = await storage.verifyPassword(admin, password);
+			if (!ok) throw new Error('Senha inválida');
+			const adminSess = { id: 'admin', role: 'admin', name: admin.name || 'Administrador' };
+			setUser(adminSess);
+			await storage.setAuth({ user: adminSess });
+			return adminSess;
 		}
 
-		if (!found) throw new Error('Usuário não encontrado');
+		// Student login by matrícula or numeric id
+		let userRow = null;
+		const users = await storage.getUsers();
+		userRow = users.find(u => (u.matricula && (u.matricula === matriculaOrId)) || (String(u.id) === String(matriculaOrId)));
+		if (!userRow || userRow.role !== 'student') throw new Error('Usuário não encontrado');
+		const ok = await storage.verifyPassword(userRow, password);
+		if (!ok) throw new Error('Senha inválida');
 
-		const userObj = { id: found.id, name: found.name, matricula: found.matricula, role: 'student' };
+		const userObj = { id: userRow.id, name: userRow.name, matricula: userRow.matricula, role: 'student' };
 		setUser(userObj);
 		await storage.setAuth({ user: userObj });
 		return userObj;

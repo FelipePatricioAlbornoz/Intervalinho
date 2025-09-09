@@ -13,22 +13,20 @@ export default function RegisterScreen({ onBack }) {
   const { signIn } = useContext(AuthContext);
 
   const cadastrar = async () => {
-    if (!name || !matricula) {
-      alert('Nome e matrícula são obrigatórios');
+    if (!name || !matricula || !password) {
+      alert('Nome, matrícula e senha são obrigatórios');
       return;
     }
     setLoading(true);
     try {
-        
-      // criar registro de aluno, la pass no se usa x ahora
-
-      const student = { name, matricula };
-      const created = await storage.addStudent(student);
-
-      // login automatico
-      await signIn(matricula, '');
+      // Registrar aluno com senha segura (hash + salt)
+      await storage.registerStudent({ name, matricula, password });
+      // login automático com a mesma senha
+      await signIn(matricula, password);
     } catch (e) {
       console.log('erro cadastro', e);
+      const msg = e?.message || 'Falha ao cadastrar. Tente novamente.';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -37,7 +35,7 @@ export default function RegisterScreen({ onBack }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.appName}>Nome do app</Text>
+        <Text style={styles.appName}>Intervalinho</Text>
         <Text style={styles.subtitle}>Cadastre seu usuario</Text>
 
         <TextInput
