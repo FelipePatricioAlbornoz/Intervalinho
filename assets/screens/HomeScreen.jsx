@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
@@ -36,18 +35,63 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  welcome: { fontSize: 18, fontWeight: '500', textAlign: 'center', marginVertical: 20, color: '#111' },
-  buttonList: { gap: 14 },
-  button: {
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 16,
-    borderRadius: 10,
-    alignItems: 'center',
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: '#fff' 
   },
-  buttonText: { fontSize: 16, color: '#111' },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  menuIcon: {
+    fontSize: 20,
+    color: '#000',
+  },
+  appName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  profileIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#ddd',
+  },
+  homeIcon: {
+    fontSize: 40,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  welcome: { 
+    fontSize: 18, 
+    fontWeight: '500', 
+    textAlign: 'center', 
+    marginBottom: 40, 
+    color: '#111' 
+  },
+  buttonList: { 
+    gap: 12,
+    marginBottom: 40,
+  },
+  button: {
+    backgroundColor: '#f8f8f8',
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  buttonText: { 
+    fontSize: 16, 
+    color: '#000',
+    fontWeight: '500',
+  },
   logoutButton: {
-    marginTop: 'auto',
     backgroundColor: '#e53935',
     paddingVertical: 14,
     borderRadius: 10,
@@ -55,7 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   logoutText: {
-    color: '#f',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
