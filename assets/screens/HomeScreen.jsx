@@ -11,7 +11,7 @@ const buttons = [
 ];
 
 export default function HomeScreen() {
-  const { user } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
 
   const renderButton = ({ item }) => (
     <TouchableOpacity style={styles.button}>
@@ -28,6 +28,9 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.buttonList}
       />
+      <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
+        <Text style={styles.logoutText}>Sair</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -43,4 +46,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: { fontSize: 16, color: '#111' },
+  logoutButton: {
+    marginTop: 'auto',
+    backgroundColor: '#e53935',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 18,
+  },
+  logoutText: {
+    color: '#f',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
