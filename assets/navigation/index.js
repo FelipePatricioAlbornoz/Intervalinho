@@ -4,6 +4,7 @@ import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AdminScreen from '../screens/AdminScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -20,5 +21,6 @@ export default function AppNavigation() {
 		if (showRegister) return <RegisterScreen onBack={() => setShowRegister(false)} />;
 		return <LoginScreen onRegister={() => setShowRegister(true)} />;
 	}
-	return <AdminScreen />;
+	if (user.role === 'admin') return <AdminScreen />;
+	return <HomeScreen />;
 }
