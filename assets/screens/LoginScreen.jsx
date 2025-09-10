@@ -14,25 +14,56 @@ export default function LoginScreen({ onRegister }){
   }, []);
 
   const entrar = () => {
-    setLoading(true)
-    console.log('--- Click en continuar ---')
-    console.log('Matrícula:', matricula)
-    console.log('Contraseña:', password)
-    signIn(matricula,password).then(user => {
-      console.log('=== Dados do usuario ===')
-      console.log('Nombre:', user?.displayName || user?.name || 'No disponible')
-      console.log('Email:', user?.email || 'No disponible')
-      console.log('ID de usuario:', user?.uid || user?.id || 'No disponible')
-      console.log('Proveedor:', user?.providerData?.[0]?.providerId || 'No disponible')
-      console.log('Email verificado:', user?.emailVerified ? 'Sí' : 'No')
-    }).catch(e=>{
-      console.error('Error en inicio de sesión:', e)
-    }).finally(()=>{
-      setLoading(false)
-      console.log('--- Fin de login ---')
-    })
+    setLoading(true);
+  
+    // Banner inicial
+    console.log(`
+  ╔═════════════════════════════════════╗
+  ║     ░░░ Click en continuar ░░░      ║
+  ╚═════════════════════════════════════╝
+    `);
+  
+    // Dados de login ingresados
+    console.log(`
+  ╔════════════════════════╗
+  ║       Datos de Login       ║
+  ╚════════════════════════╝
+  Matrícula: ${matricula}
+  Contraseña: ${'*'.repeat(password.length)}
+    `);
+  
+    signIn(matricula, password)
+      .then(user => {
+        // Informação do usuário
+        console.log(`
+  ╔══════════════════════════╗
+  ║     Datos del Usuario     ║
+  ╚══════════════════════════╝
+  Nombre: ${user?.displayName || user?.name || 'No disponible'}
+  Email: ${user?.email || 'No disponible'}
+  ID de Usuario: ${user?.uid || user?.id || 'No disponible'}
+  Proveedor: ${user?.providerData?.[0]?.providerId || 'No disponible'}
+  Email verificado: ${user?.emailVerified ? 'Sí' : 'No'}
+        `);
+      })
+      .catch(e => {
+        console.error(`
+  ╔══════════════════════════╗
+  ║     Error en Login      ║
+  ╚══════════════════════════╝
+  ${e}
+        `);
+      })
+      .finally(() => {
+        setLoading(false);
+        console.log(`
+  ╔══════════════════════════╗
+  ║       Fin de Login       ║
+  ╚══════════════════════════╝
+        `);
+      });
   }
-
+  
   return(
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
