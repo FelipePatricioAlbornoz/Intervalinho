@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Linking } from 'react-native';
 import storage from '../services/storage';
 import { AuthContext } from '../context/AuthContext';
@@ -12,23 +12,33 @@ export default function RegisterScreen({ onBack }) {
   const [loading, setLoading] = useState(false);
   const { signIn } = useContext(AuthContext);
 
+  useEffect(() => {
+    console.log('[RegisterScreen] Montado');
+    return () => console.log('[RegisterScreen] Desmontado');
+  }, []);
+
   const cadastrar = async () => {
+    console.log('--- Click en cadastrar ---');
+    console.log('Nombre:', name);
+    console.log('Matrícula:', matricula);
+    console.log('Contraseña:', password);
+    console.log('Rol:', roleAluno ? 'Aluno' : 'Admin');
     if (!name || !matricula || !password) {
       alert('Nome, matrícula e senha são obrigatórios');
       return;
     }
     setLoading(true);
     try {
-      // Registrar aluno com senha segura (hash + salt)
       await storage.registerStudent({ name, matricula, password });
-      // login automático com a mesma senha
       await signIn(matricula, password);
+      console.log('Registro y login exitosos');
     } catch (e) {
       console.log('erro cadastro', e);
       const msg = e?.message || 'Falha ao cadastrar. Tente novamente.';
       alert(msg);
     } finally {
       setLoading(false);
+      console.log('--- Fin de cadastro ---');
     }
   };
 
@@ -36,21 +46,27 @@ export default function RegisterScreen({ onBack }) {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.appName}>Intervalinho</Text>
-        <Text style={styles.subtitle}>Cadastre seu usuario</Text>
+        <Text style={styles.subtitle}>Cadastre seu usuário</Text>
 
         <TextInput
           placeholder="Digite seu nome"
           placeholderTextColor="#9AA0A6"
           value={name}
-          onChangeText={setName}
+          onChangeText={t => {
+            setName(t);
+            console.log('[RegisterScreen] Cambio nombre:', t);
+          }}
           style={styles.input}
         />
 
         <TextInput
-          placeholder="Digite sua matricula ou e-mail"
+          placeholder="Digite sua matrícula ou e-mail"
           placeholderTextColor="#9AA0A6"
           value={matricula}
-          onChangeText={setMatricula}
+          onChangeText={t => {
+            setMatricula(t);
+            console.log('[RegisterScreen] Cambio matrícula:', t);
+          }}
           style={[styles.input, { marginTop: 12 }]}
           autoCapitalize="none"
         />
@@ -59,7 +75,10 @@ export default function RegisterScreen({ onBack }) {
           placeholder="Digite sua senha"
           placeholderTextColor="#9AA0A6"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={t => {
+            setPassword(t);
+            console.log('[RegisterScreen] Cambio contraseña:', t);
+          }}
           secureTextEntry={true}
           style={[styles.input, { marginTop: 12 }]}
         />
@@ -80,8 +99,11 @@ export default function RegisterScreen({ onBack }) {
         </TouchableOpacity>
 
         <View style={styles.loginRow}>
-          <Text style={styles.loginText}>Já tem conta? </Text>
-          <TouchableOpacity onPress={() => onBack && onBack()}>
+          <Text style={styles.loginText}>Já tem uma conta? </Text>
+          <TouchableOpacity onPress={() => {
+            console.log('[RegisterScreen] Click en ir para login');
+            onBack && onBack();
+          }}>
             <Text style={styles.loginLink}>(ir para login)</Text>
           </TouchableOpacity>
         </View>
@@ -89,7 +111,7 @@ export default function RegisterScreen({ onBack }) {
         <View style={styles.divider} />
 
         <Text style={styles.termsText}>
-          Ao clicar em continuar, você concorda com os nossos
+          Ao clicar em continuar, você concorda com nossos
         </Text>
         <View style={styles.linksRow}>
           <TouchableOpacity onPress={() => Linking.openURL('https://example.com/termos')}>

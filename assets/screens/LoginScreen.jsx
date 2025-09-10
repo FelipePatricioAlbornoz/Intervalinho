@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking, SafeAreaView, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 
@@ -8,22 +8,29 @@ export default function LoginScreen({ onRegister }){
   const [loading,setLoading] = useState(false)
   const { signIn } = useContext(AuthContext)
 
+  useEffect(() => {
+    console.log('[LoginScreen] Montado');
+    return () => console.log('[LoginScreen] Desmontado');
+  }, []);
+
   const entrar = () => {
     setLoading(true)
-    console.log("=== Datos del inicio de sesión ===")
-    console.log("Matrícula:", matricula)
-    console.log("Contraseña:", password)
-    
+    console.log('--- Click en continuar ---')
+    console.log('Matrícula:', matricula)
+    console.log('Contraseña:', password)
     signIn(matricula,password).then(user => {
-      console.log("=== Dados do usuario ===")
-      console.log("Nombre:", user?.displayName || 'No disponible')
-      console.log("Email:", user?.email || 'No disponible')
-      console.log("ID de usuario:", user?.uid || 'No disponible')
-      console.log("Proveedor:", user?.providerData?.[0]?.providerId || 'No disponible')
-      console.log("Email verificado:", user?.emailVerified ? 'Sí' : 'No')
+      console.log('=== Dados do usuario ===')
+      console.log('Nombre:', user?.displayName || user?.name || 'No disponible')
+      console.log('Email:', user?.email || 'No disponible')
+      console.log('ID de usuario:', user?.uid || user?.id || 'No disponible')
+      console.log('Proveedor:', user?.providerData?.[0]?.providerId || 'No disponible')
+      console.log('Email verificado:', user?.emailVerified ? 'Sí' : 'No')
     }).catch(e=>{
-      console.error("Error en inicio de sesión:", e)
-    }).finally(()=>setLoading(false))
+      console.error('Error en inicio de sesión:', e)
+    }).finally(()=>{
+      setLoading(false)
+      console.log('--- Fin de login ---')
+    })
   }
 
   return(
@@ -37,7 +44,10 @@ export default function LoginScreen({ onRegister }){
           placeholder="Digite sua matrícula ou código"
           placeholderTextColor="#9AA0A6"
           value={matricula}
-          onChangeText={t=>setMatricula(t)}
+          onChangeText={t=>{
+            setMatricula(t);
+            console.log('[LoginScreen] Cambio matrícula:', t);
+          }}
           autoCapitalize="none"
           style={styles.input}
           returnKeyType="next"
@@ -48,7 +58,10 @@ export default function LoginScreen({ onRegister }){
           placeholderTextColor="#9AA0A6"
           value={password}
           secureTextEntry={true}
-          onChangeText={t=>setPassword(t)}
+          onChangeText={t=>{
+            setPassword(t);
+            console.log('[LoginScreen] Cambio contraseña:', t);
+          }}
           style={[styles.input, {marginTop:12}]}
           returnKeyType="go"
           onSubmitEditing={entrar}
@@ -68,8 +81,11 @@ export default function LoginScreen({ onRegister }){
         </TouchableOpacity>
 
         <View style={styles.registerRow}>
-          <Text style={styles.registerText}>Não possui conta? </Text>
-          <TouchableOpacity onPress={() => onRegister && onRegister()}>
+          <Text style={styles.registerText}>Não tem uma conta? </Text>
+          <TouchableOpacity onPress={() => {
+            console.log('[LoginScreen] Click en ir para cadastro');
+            onRegister && onRegister();
+          }}>
             <Text style={styles.registerLink}>(ir para cadastro)</Text>
           </TouchableOpacity>
         </View>
@@ -77,7 +93,7 @@ export default function LoginScreen({ onRegister }){
         <View style={styles.divider} />
 
         <Text style={styles.termsText}>
-          Ao clicar em continuar, você concorda com os nossos
+          Ao clicar em continuar, você concorda com nossos
         </Text>
         <View style={styles.linksRow}>
           <TouchableOpacity onPress={() => Linking.openURL('https://example.com/termos')}>
