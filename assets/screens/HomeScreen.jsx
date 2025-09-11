@@ -20,13 +20,29 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.menuIcon}>☰</Text>
+        <View style={styles.profileIcon} />
+      </View>
+      
+      <Text style={styles.appName}>Intervalinho</Text>
+      <Text style={styles.homeIcon}>
+        ___
+       /   \
+      /     \
+     |  []  |
+     |      |
+     |______|
+</Text>
       <Text style={styles.welcome}>Bem vindo, {user?.name || 'Aluno'}</Text>
+      
       <FlatList
         data={buttons}
         renderItem={renderButton}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.buttonList}
       />
+      
       <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
@@ -51,7 +67,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   appName: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#000',
   },
@@ -62,9 +78,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
   homeIcon: {
-    fontSize: 40,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 20,
+    fontFamily: 'Courier',
+    lineHeight: 18,
   },
   welcome: { 
     fontSize: 18, 
