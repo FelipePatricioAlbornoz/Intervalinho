@@ -26,7 +26,8 @@ export default function HomeScreen() {
       </View>
       
       <Text style={styles.appName}>Intervalinho</Text>
-      <Text style={styles.homeIcon}>⌂</Text>
+      <Text style={styles.homeIcon}>
+</Text>
       <Text style={styles.welcome}>Bem vindo, {user?.name || 'Aluno'}</Text>
       
       <FlatList
@@ -71,9 +72,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
   homeIcon: {
-    fontSize: 48,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 20,
+    fontFamily: 'Courier',
+    lineHeight: 18,
   },
   welcome: { 
     fontSize: 18, 
