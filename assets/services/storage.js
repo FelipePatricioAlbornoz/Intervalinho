@@ -124,7 +124,7 @@ const verifyPassword = async (user, password) => {
   return hash === user.passwordHash;
 };
 
-const registerStudent = async ({ name, matricula, password }) => {
+const registerStudent = async ({ name, matricula, password, role = 'student' }) => {
   if (!name || !matricula || !password) {
     throw new Error('Nome, matrícula e senha são obrigatórios');
   }
@@ -144,7 +144,7 @@ const registerStudent = async ({ name, matricula, password }) => {
   const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
   const passwordHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${saltHex}:${password}`);
-  users.push({ id: newId, name, role: 'student', matricula, passwordHash, salt: saltHex });
+  users.push({ id: newId, name, role, matricula, passwordHash, salt: saltHex });
   await setUsers(users);
 
   return newStudent;

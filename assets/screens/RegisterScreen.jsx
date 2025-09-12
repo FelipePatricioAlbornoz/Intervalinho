@@ -29,7 +29,8 @@ export default function RegisterScreen({ onBack }) {
     }
     setLoading(true);
     try {
-      await storage.registerStudent({ name, matricula, password });
+      const role = roleAluno ? 'student' : 'admin';
+      await storage.registerStudent({ name, matricula, password, role });
       await signIn(matricula, password);
       console.log('Registro y login exitosos');
     } catch (e) {
