@@ -125,11 +125,17 @@ const verifyPassword = async (user, password) => {
 };
 
 const registerStudent = async ({ name, matricula, password, role = 'student' }) => {
+  console.log('registerStudent llamado con:', { name, matricula, password, role });
+  
   if (!name || !matricula || !password) {
     throw new Error('Nome, matrícula e senha são obrigatórios');
   }
+  
   const students = (await getStudents()) || [];
   const users = (await getUsers()) || [];
+  
+  console.log('Usuarios existentes:', users.length);
+  console.log('Estudiantes existentes:', students.length);
   
   const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
   if (exists) throw new Error('Matrícula já cadastrada');
@@ -166,6 +172,23 @@ const addStudent = async (student) => {
   return newStudent;
 };
 
+const resetAllData = async () => {
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    console.log('Claves a borrar:', keys);
+    
+    if (keys.length > 0) {
+      await AsyncStorage.multiRemove(keys);
+      console.log('✅ TODOS LOS DATOS BORRADOS');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error borrando datos:', error);
+    return false;
+  }
+};
+
 export default {
   read,
   write,
@@ -182,4 +205,5 @@ export default {
   registerStudent,
   findUserByMatricula,
   verifyPassword,
+  resetAllData,
 };
