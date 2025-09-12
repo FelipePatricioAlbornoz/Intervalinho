@@ -134,12 +134,18 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
   const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
   if (exists) throw new Error('Matrícula já cadastrada');
 
-  const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : 0));
-  const maxId = numericIds.reduce((m, n) => (n > m ? n : m), 0);
-  const newId = maxId + 1;
-  const newStudent = { id: newId, name, matricula };
-  students.push(newStudent);
-  await write('students', students);
+  let newId;
+  
+  if (role === 'student') {
+    const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : 0));
+    const maxId = numericIds.reduce((m, n) => (n > m ? n : m), 0);
+    newId = maxId + 1;
+    const newStudent = { id: newId, name, matricula };
+    students.push(newStudent);
+    await write('students', students);
+  } else {
+    newId = matricula;
+  }
 
   const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -147,7 +153,7 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
   users.push({ id: newId, name, role, matricula, passwordHash, salt: saltHex });
   await setUsers(users);
 
-  return newStudent;
+  return { id: newId, name, matricula, role };
 };
 
 const addStudent = async (student) => {
