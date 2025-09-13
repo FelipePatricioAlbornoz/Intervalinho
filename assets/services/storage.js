@@ -137,8 +137,20 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
   console.log('Usuarios existentes:', users.length);
   console.log('Estudiantes existentes:', students.length);
   
-  const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
-  if (exists) throw new Error('Matrícula já cadastrada');
+  // Solo verificar si ya existe un usuario con el mismo rol Y matrícula
+  const exists = users.find(u => 
+    u.matricula && 
+    String(u.matricula) === String(matricula) && 
+    u.role === role
+  );
+  
+  console.log('Buscando usuario existente con:', { matricula, role });
+  console.log('Usuario encontrado:', exists);
+  
+  if (exists) {
+    console.log('ERROR: Usuario ya existe');
+    throw new Error(`Ya existe un ${role} con esa matrícula`);
+  }
 
   let newId;
   
@@ -181,6 +193,10 @@ const resetAllData = async () => {
       await AsyncStorage.multiRemove(keys);
       console.log('✅ TODOS LOS DATOS BORRADOS');
     }
+    
+    // Forzar limpieza completa
+    await AsyncStorage.clear();
+    console.log('✅ STORAGE COMPLETAMENTE LIMPIO');
     
     return true;
   } catch (error) {

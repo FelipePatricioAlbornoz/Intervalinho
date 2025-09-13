@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList, Alert } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import storage from '../services/storage';
 
 const adminButtons = [
   { key: '1', label: 'Validar Ticket' },
@@ -12,6 +13,28 @@ const adminButtons = [
 
 export default function AdminScreen() {
   const { user, signOut } = useContext(AuthContext);
+
+  const resetAllData = async () => {
+    Alert.alert(
+      'RESET COMPLETO',
+      '¿Borrar TODOS los datos?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'BORRAR TODO',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await storage.resetAllData();
+              Alert.alert('Éxito', 'Todos los datos borrados');
+            } catch (error) {
+              Alert.alert('Error', 'No se pudo borrar');
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const renderButton = ({ item }) => (
     <TouchableOpacity style={styles.button}>
@@ -37,6 +60,13 @@ export default function AdminScreen() {
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.buttonList}
       />
+      
+      <TouchableOpacity 
+        style={styles.resetButton} 
+        onPress={resetAllData}
+      >
+        <Text style={styles.resetButtonText}>🗑️ RESET COMPLETO</Text>
+      </TouchableOpacity>
       
       <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
         <Text style={styles.logoutText}>Sair</Text>
@@ -115,5 +145,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  resetButton: {
+    backgroundColor: '#ff4444',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  resetButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
