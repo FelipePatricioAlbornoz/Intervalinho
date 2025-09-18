@@ -1,7 +1,27 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
+import { AuthContext } from '../context/AuthContext';
 
 export default function ReceberTicketScreen({ onBack }) {
+  const { user } = useContext(AuthContext);
+  const [showButton, setShowButton] = useState(false);
+
+  // Horário do intervalo (pode ser ajustado conforme necessário)
+  const intervaloInicio = '12:30';
+  const intervaloDate = new Date();
+  intervaloDate.setHours(Number(intervaloInicio.split(':')[0]), Number(intervaloInicio.split(':')[1]), 0, 0);
+
+  useEffect(() => {
+    const checkTime = () => {
+      const agora = new Date();
+      const diff = (intervaloDate - agora) / 60000; // minutos até o intervalo
+      setShowButton(diff <= 5 && diff >= 0);
+    };
+    checkTime();
+    const timer = setInterval(checkTime, 10000); // checa a cada 10s
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -15,13 +35,18 @@ export default function ReceberTicketScreen({ onBack }) {
 
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>
-            Em apenas nos 5 minutos antes do intervalo.
+            O botão só aparece nos 5 minutos antes do intervalo.
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>Receber Ticket</Text>
-        </TouchableOpacity>
+        {showButton && (
+          <TouchableOpacity style={styles.button} onPress={() => {}}>
+            <Text style={styles.buttonText}>Receber Ticket</Text>
+          </TouchableOpacity>
+        )}
+        {!showButton && (
+          <Text style={{ color: '#888', marginTop: 20 }}>Fora do horário para receber ticket.</Text>
+        )}
       </View>
     </SafeAreaView>
   );
