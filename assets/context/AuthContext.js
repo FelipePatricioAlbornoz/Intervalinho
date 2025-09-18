@@ -35,18 +35,29 @@ export function AuthProvider({ children }) {
 			return adminSess;
 		}
 
-		// Student login by matrícula or numeric id
+		// Student o Admin login por matrícula o id
 		let userRow = null;
 		const users = await storage.getUsers();
 		userRow = users.find(u => (u.matricula && (u.matricula === matriculaOrId)) || (String(u.id) === String(matriculaOrId)));
-		if (!userRow || userRow.role !== 'student') throw new Error('Usuário não encontrado');
+		if (!userRow) throw new Error('Usuário não encontrado');
 		const ok = await storage.verifyPassword(userRow, password);
 		if (!ok) throw new Error('Senha inválida');
 
-		const userObj = { id: userRow.id, name: userRow.name, matricula: userRow.matricula, role: 'student' };
-		setUser(userObj);
-		await storage.setAuth({ user: userObj });
-		return userObj;
+		if (userRow.role === 'admin') {
+			const adminSess = { id: userRow.id, role: 'admin', name: userRow.name || 'Administrador' };
+			setUser(adminSess);
+			await storage.setAuth({ user: adminSess });
+			return adminSess;
+		}
+
+		if (userRow.role === 'student') {
+			const userObj = { id: userRow.id, name: userRow.name, matricula: userRow.matricula, role: 'student' };
+			setUser(userObj);
+			await storage.setAuth({ user: userObj });
+			return userObj;
+		}
+
+		throw new Error('Tipo de usuário não suportado');
 	};
 
 	const signOut = async () => {
