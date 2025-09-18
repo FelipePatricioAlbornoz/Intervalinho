@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet } from 'react-native';
 import storage from './assets/services/storage';

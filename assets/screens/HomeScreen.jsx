@@ -9,11 +9,36 @@ const buttons = [
   { key: '4', label: 'Disponibilidade' },
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen({ onNavigate }) {
   const { user, signOut } = useContext(AuthContext);
 
+  const handleButtonPress = (buttonKey) => {
+    switch (buttonKey) {
+      case '1': // Receber Ticket
+        onNavigate('receber-ticket');
+        break;
+      case '2': // Intervalo
+        // TODO: Implementar tela de intervalo
+        console.log('Navegar para tela de intervalo');
+        break;
+      case '3': // Localização
+        // TODO: Implementar tela de localização
+        console.log('Navegar para tela de localização');
+        break;
+      case '4': // Disponibilidade
+        // TODO: Implementar tela de disponibilidade
+        console.log('Navegar para tela de disponibilidade');
+        break;
+      default:
+        console.log('Botão não implementado:', buttonKey);
+    }
+  };
+
   const renderButton = ({ item }) => (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity 
+      style={styles.button}
+      onPress={() => handleButtonPress(item.key)}
+    >
       <Text style={styles.buttonText}>{item.label}</Text>
     </TouchableOpacity>
   );
