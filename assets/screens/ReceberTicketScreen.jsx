@@ -1,26 +1,61 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
 import { AuthContext } from '../context/AuthContext';
+import { INTERVAL_CONFIG } from '../constants/config';
 
 export default function ReceberTicketScreen({ onBack }) {
   const { user } = useContext(AuthContext);
   const [showButton, setShowButton] = useState(false);
 
-  // Horário do intervalo (pode ser ajustado conforme necessário)
-  const intervaloInicio = '12:30';
-  const intervaloDate = new Date();
-  intervaloDate.setHours(Number(intervaloInicio.split(':')[0]), Number(intervaloInicio.split(':')[1]), 0, 0);
+  const parseIntervalTime = (timeString) => {
+    try {
+      const [hours, minutes] = timeString.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+        throw new Error('Invalid time format');
+      }
+      return { hours, minutes };
+    } catch (error) {
+      console.error('Error parsing interval time:', error);
+      return { hours: 12, minutes: 30 };
+    }
+  };
+
+  const checkTime = () => {
+    try {
+      const agora = new Date();
+      const { hours, minutes } = parseIntervalTime(intervalConfig.START_TIME);
+      
+      const intervaloDate = new Date();
+      intervaloDate.setHours(hours, minutes, 0, 0);
+      
+      if (intervaloDate <= agora) {
+      intervaloDate.setDate(intervaloDate.getDate() + 1);
+      }
+      
+      const diff = (intervaloDate - agora) / 60000;
+      setShowButton(diff <= intervalConfig.MINUTES_BEFORE_INTERVAL && diff >= 0);
+    } catch (error) {
+      console.error('Error checking time:', error);
+      setShowButton(false);
+    }
+  };
 
   useEffect(() => {
-    const checkTime = () => {
-      const agora = new Date();
-      const diff = (intervaloDate - agora) / 60000; // minutos até o intervalo
-      setShowButton(diff <= 5 && diff >= 0);
-    };
     checkTime();
-    const timer = setInterval(checkTime, 10000); // checa a cada 10s
+    const timer = setInterval(checkTime, intervalConfig.CHECK_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
+
+  const handleReceiveTicket = () => {
+    try {
+      console.log('Ticket recebido para usuário:', user?.name || 'Usuário');
+      
+      alert('Ticket recebido com sucesso!');
+    } catch (error) {
+      console.error('Erro ao receber ticket:', error);
+      alert('Erro ao receber ticket. Tente novamente.');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,12 +70,12 @@ export default function ReceberTicketScreen({ onBack }) {
 
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>
-            O botão só aparece nos 5 minutos antes do intervalo.
+            O botão só aparece nos {intervalConfig.MINUTES_BEFORE_INTERVAL} minutos antes do intervalo.
           </Text>
         </View>
 
         {showButton && (
-          <TouchableOpacity style={styles.button} onPress={() => {}}>
+          <TouchableOpacity style={styles.button} onPress={handleReceiveTicket}>
             <Text style={styles.buttonText}>Receber Ticket</Text>
           </TouchableOpacity>
         )}
