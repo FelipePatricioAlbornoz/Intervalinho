@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
 import { AuthContext } from '../context/AuthContext';
-import { INTERVAL_CONFIG } from '../constants/config';
+import { intervalConfig } from '../constants/config';
 
 export default function ReceberTicketScreen({ onBack }) {
   const { user } = useContext(AuthContext);
@@ -23,7 +23,7 @@ export default function ReceberTicketScreen({ onBack }) {
   const checkTime = () => {
     try {
       const agora = new Date();
-      const { hours, minutes } = parseIntervalTime(INTERVAL_CONFIG.START_TIME);
+      const { hours, minutes } = parseIntervalTime(intervalConfig.START_TIME);
       
       const intervaloDate = new Date();
       intervaloDate.setHours(hours, minutes, 0, 0);

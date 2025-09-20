@@ -11,7 +11,7 @@ const adminButtons = [
   { key: '5', label: 'Disponibilidade' },
 ];
 
-export default function AdminScreen() {
+export default function AdminScreen({ onNavigate }) {
   const { user, signOut } = useContext(AuthContext);
 
   const resetAllData = async () => {
@@ -37,7 +37,15 @@ export default function AdminScreen() {
   };
 
   const renderButton = ({ item }) => (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity 
+      style={styles.button}
+      onPress={() => {
+        if (item.key === '4') {
+          // Navegar para a tela de Cadastro de Aluno
+          onNavigate('cadastro-aluno');
+        }
+      }}
+    >
       <Text style={styles.buttonText}>{item.label}</Text>
     </TouchableOpacity>
   );
