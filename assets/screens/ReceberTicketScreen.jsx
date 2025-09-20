@@ -23,7 +23,7 @@ export default function ReceberTicketScreen({ onBack }) {
   const checkTime = () => {
     try {
       const agora = new Date();
-      const { hours, minutes } = parseIntervalTime(intervalConfig.START_TIME);
+      const { hours, minutes } = parseIntervalTime(INTERVAL_CONFIG.START_TIME);
       
       const intervaloDate = new Date();
       intervaloDate.setHours(hours, minutes, 0, 0);

@@ -13,7 +13,6 @@ export function AuthProvider({ children }) {
 					const auth = await storage.getAuth();
 					if (auth && auth.user) setUser(auth.user);
 				} catch (e) {
-					// ignore
 				} finally {
 					setRestoring(false);
 				}
@@ -29,13 +28,24 @@ export function AuthProvider({ children }) {
 				name: 'Administrador',
 				role: 'admin'
 			};
-		}
-		else if (matricula && !password) {
+		} else {
+			const users = await storage.getUsers();
+			const userFound = users.find(u => u.matricula === matricula);
+
+			if (!userFound) {
+				throw new Error('Usuário não encontrado');
+			}
+
+			const passwordOk = await storage.verifyPassword(userFound, password);
+			if (!passwordOk) {
+				throw new Error('Senha inválida');
+			}
+
 			userToLogin = {
-				id: matricula,
-				name: `Aluno ${matricula}`,
-				matricula: matricula,
-				role: 'student'
+				id: userFound.id,
+				name: userFound.name,
+				matricula: userFound.matricula,
+				role: userFound.role
 			};
 		}
 

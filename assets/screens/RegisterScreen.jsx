@@ -31,8 +31,10 @@ export default function RegisterScreen({ onBack }) {
     try {
       const role = roleAluno ? 'student' : 'admin';
       await storage.registerStudent({ name, matricula, password, role });
-      await signIn(matricula, password);
-      console.log('Registro y login exitosos');
+
+      alert('Usuário cadastrado com sucesso!\nAgora você pode fazer o login.');
+      onBack && onBack();
+
     } catch (e) {
       console.log('erro cadastro', e);
       const msg = e?.message || 'Falha ao cadastrar. Tente novamente.';
