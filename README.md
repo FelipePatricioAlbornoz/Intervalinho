@@ -105,3 +105,4 @@ O app deve permitir que **alunos** recebam tickets dentro de regras específicas
 ```powershell
 npm install @react-native-async-storage/async-storage
 npm install
+npx expo install expo-location
