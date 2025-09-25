@@ -7,6 +7,7 @@ import AdminScreen from '../screens/AdminScreen';
 import HomeScreen from '../screens/HomeScreen';
 import ReceberTicketScreen from '../screens/ReceberTicketScreen';
 import CadastroAlunoScreen from '../screens/CadastroAlunoScreen';
+import LocationScreen from '../screens/LocationScreen';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -36,12 +37,18 @@ export default function AppNavigation() {
 		if (currentScreen === 'cadastro-aluno') {
 			return <CadastroAlunoScreen onBack={goBack} />;
 		}
+		if (currentScreen === 'location') {
+			return <LocationScreen onBack={goBack} />;
+		}
 		return <AdminScreen onNavigate={navigateToScreen} />;
 	}
 	
 	// Navegación para estudiantes
 	if (currentScreen === 'receber-ticket') {
 		return <ReceberTicketScreen onBack={goBack} />;
+	}
+	if (currentScreen === 'location') {
+		return <LocationScreen onBack={goBack} />;
 	}
 	
 	return <HomeScreen onNavigate={navigateToScreen} />;
