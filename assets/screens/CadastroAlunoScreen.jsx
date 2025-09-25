@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import storage from '../services/storage';
 
-export default function CadastroAlunoScreen() {
-  const navigation = useNavigation();
+export default function CadastroAlunoScreen({ onBack }) {
   const [nome, setNome] = useState('');
   const [matricula, setMatricula] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,7 +37,7 @@ export default function CadastroAlunoScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => onBack && onBack()}>
           <Text style={styles.link}>Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Cadastrar Aluno</Text>
