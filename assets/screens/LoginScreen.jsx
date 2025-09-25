@@ -15,53 +15,11 @@ export default function LoginScreen({ onRegister }){
 
   const entrar = () => {
     setLoading(true);
-  
-    // Banner inicial
-    console.log(`
-  ╔═════════════════════════════════════╗
-  ║     ░░░ Click en continuar ░░░      ║
-  ╚═════════════════════════════════════╝
-    `);
-  
-    // Dados de login ingresados
-    console.log(`
-  ╔════════════════════════╗
-  ║       Datos de Login       ║
-  ╚════════════════════════╝
-  Matrícula: ${matricula}
-  Contraseña: ${'*'.repeat(password.length)}
-    `);
-  
+    console.log("Click en continuar");
+
     signIn(matricula, password)
-      .then(user => {
-        // Informação do usuário
-        console.log(`
-  ╔══════════════════════════╗
-  ║     Datos del Usuario     ║
-  ╚══════════════════════════╝
-  Nombre: ${user?.displayName || user?.name || 'No disponible'}
-  Email: ${user?.email || 'No disponible'}
-  ID de Usuario: ${user?.uid || user?.id || 'No disponible'}
-  Proveedor: ${user?.providerData?.[0]?.providerId || 'No disponible'}
-  Email verificado: ${user?.emailVerified ? 'Sí' : 'No'}
-        `);
-      })
-      .catch(e => {
-        console.error(`
-  ╔══════════════════════════╗
-  ║     Error en Login      ║
-  ╚══════════════════════════╝
-  ${e}
-        `);
-      })
-      .finally(() => {
-        setLoading(false);
-        console.log(`
-  ╔══════════════════════════╗
-  ║       Fin de Login       ║
-  ╚══════════════════════════╝
-        `);
-      });
+      .catch(e => console.error("Error en Login:", e))
+      .finally(() => setLoading(false));
   }
   
   return(
@@ -75,10 +33,7 @@ export default function LoginScreen({ onRegister }){
           placeholder="Digite sua matrícula ou código"
           placeholderTextColor="#9AA0A6"
           value={matricula}
-          onChangeText={t=>{
-            setMatricula(t);
-            console.log('[LoginScreen] Cambio matrícula:', t);
-          }}
+          onChangeText={setMatricula}
           autoCapitalize="none"
           style={styles.input}
           returnKeyType="next"
@@ -89,10 +44,7 @@ export default function LoginScreen({ onRegister }){
           placeholderTextColor="#9AA0A6"
           value={password}
           secureTextEntry={true}
-          onChangeText={t=>{
-            setPassword(t);
-            console.log('[LoginScreen] Cambio contraseña:', t);
-          }}
+          onChangeText={setPassword}
           style={[styles.input, {marginTop:12}]}
           returnKeyType="go"
           onSubmitEditing={entrar}
@@ -113,19 +65,20 @@ export default function LoginScreen({ onRegister }){
 
         <View style={styles.registerRow}>
           <Text style={styles.registerText}>Não tem uma conta? </Text>
-          <TouchableOpacity onPress={() => {
-            console.log('[LoginScreen] Click en ir para cadastro');
-            onRegister && onRegister();
-          }}>
+          <TouchableOpacity onPress={onRegister}>
             <Text style={styles.registerLink}>(ir para cadastro)</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
 
-        <Text style={styles.termsText}>
-          Ao clicar em continuar, você concorda com nossos
-        </Text>
+        {/* Texto de termos */}
+        <View style={{ width: '100%', marginTop: 12 }}>
+          <Text style={styles.termsText}>
+            Ao clicar em continuar, você concorda com nossos
+          </Text>
+        </View>
+
         <View style={styles.linksRow}>
           <TouchableOpacity onPress={() => Linking.openURL('https://example.com/termos')}>
             <Text style={styles.linkText}>Termos de Serviço</Text>
@@ -156,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#111111',
-    marginTop: 32,
+    marginTop: 250,
   },
   subtitle: {
     marginTop: 28,
@@ -208,11 +161,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#777777',
     textAlign: 'center',
-    marginTop: 24,
+    paddingHorizontal: 20,
   },
   linksRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center', // centra horizontalmente
     marginTop: 6,
   },
   linkText: {
