@@ -18,15 +18,12 @@ export default function HomeScreen({ onNavigate }) {
         onNavigate('receber-ticket');
         break;
       case '2': // Intervalo
-        // TODO: Implementar tela de intervalo
         console.log('Navegar para tela de intervalo');
         break;
       case '3': // Localização
-        // TODO: Implementar tela de localização
-        console.log('Navegar para tela de localização');
+        onNavigate('location');
         break;
       case '4': // Disponibilidade
-        // TODO: Implementar tela de disponibilidade
         console.log('Navegar para tela de disponibilidade');
         break;
       default:
@@ -52,7 +49,7 @@ export default function HomeScreen({ onNavigate }) {
       
       <Text style={styles.appName}>Intervalinho</Text>
       <Text style={styles.homeIcon}>
-</Text>
+      </Text>
       <Text style={styles.welcome}>Bem vindo, {user?.name || 'Aluno'}</Text>
       
       <FlatList
