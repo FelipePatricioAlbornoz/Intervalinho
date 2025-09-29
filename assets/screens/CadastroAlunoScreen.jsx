@@ -22,7 +22,7 @@ export default function CadastroAlunoScreen({ onBack }) {
         role: 'student',
         tickets: []
       };
-      await storage.saveAluno(novoAluno);
+      await storage.addStudent(novoAluno);
       Alert.alert('Sucesso', 'Aluno cadastrado com sucesso!');
       setNome('');
       setMatricula('');
