@@ -48,8 +48,7 @@ export default function HomeScreen({ onNavigate }) {
       </View>
       
       <Text style={styles.appName}>Intervalinho</Text>
-      <Text style={styles.homeIcon}>
-      </Text>
+      <Text style={styles.homeIcon}></Text>
       <Text style={styles.welcome}>Bem vindo, {user?.name || 'Aluno'}</Text>
       
       <FlatList

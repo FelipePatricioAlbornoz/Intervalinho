@@ -6,7 +6,7 @@ const read = async (key) => {
     const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
-    // procurar erros e depois chorar
+    // Error al leer del storage.
     console.error('storage.read error', e);
     return null;
   }
@@ -28,7 +28,7 @@ const remove = async (key) => {
   }
 };
 
-// se um dia virar produção, deus me livre
+// Función para inicializar con datos de prueba. No usar en producción.
 const initFromSeed = async (force = false) => {
   const meta = (await read('meta')) || {};
   if (!force && meta.seedApplied) {

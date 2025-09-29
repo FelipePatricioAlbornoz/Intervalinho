@@ -17,7 +17,7 @@ export default function AdminScreen({ onNavigate }) {
   const resetAllData = async () => {
     Alert.alert(
       'RESET COMPLETO',
-      '¿Borrar TODOS los datos?',
+      'Você tem certeza que deseja apagar TODOS os dados do aplicativo?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -26,9 +26,9 @@ export default function AdminScreen({ onNavigate }) {
           onPress: async () => {
             try {
               await storage.resetAllData();
-              Alert.alert('Éxito', 'Todos los datos borrados');
+              Alert.alert('Sucesso', 'Todos os dados foram apagados.');
             } catch (error) {
-              Alert.alert('Error', 'No se pudo borrar');
+              Alert.alert('Erro', 'Não foi possível apagar os dados.');
             }
           }
         }

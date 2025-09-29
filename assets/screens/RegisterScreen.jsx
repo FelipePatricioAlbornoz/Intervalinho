@@ -63,7 +63,7 @@ export default function RegisterScreen({ onBack }) {
         />
 
         <TextInput
-          placeholder="Digite sua matrícula ou e-mail"
+          placeholder="Digite sua matrícula"
           placeholderTextColor="#9AA0A6"
           value={matricula}
           onChangeText={t => {
