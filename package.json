@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "^54.0.9",
     "expo-crypto": "~15.0.7",
+    "expo-install": "^0.0.0",
     "expo-location": "~19.0.7",
     "expo-status-bar": "~3.0.8",
     "react": "19.1.0",

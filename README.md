@@ -1,7 +1,7 @@
 # 📱 Atividade Final - React Native
 
 **Aberto:** 27/08/2025  
-**Vencimento:** 09/10/2025  
+**Vencimento:** 02/10/2025  
 **Entrega:** Enviar link do repositório do GitHub
 
 ---
