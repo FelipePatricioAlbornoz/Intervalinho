@@ -6,7 +6,7 @@ const buttons = [
   { key: '1', label: 'Receber Ticket' },
   { key: '2', label: 'Intervalo' },
   { key: '3', label: 'Localização' },
-  { key: '4', label: 'Disponibilidade' },
+  { key: '4', label: 'Validação' },
 ];
 
 export default function HomeScreen({ onNavigate }) {
@@ -23,8 +23,8 @@ export default function HomeScreen({ onNavigate }) {
       case '3': // Localização
         onNavigate('location');
         break;
-      case '4': // Disponibilidade
-        console.log('Navegar para tela de disponibilidade');
+      case '4': // Validação
+        onNavigate('validacao');
         break;
       default:
         console.log('Botão não implementado:', buttonKey);

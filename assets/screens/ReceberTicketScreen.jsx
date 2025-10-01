@@ -2,10 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
 import { AuthContext } from '../context/AuthContext';
 import { intervalConfig } from '../constants/config';
+import Storage from '../services/storage';
+import { isInsideSchoolAsync } from '../services/location';
 
 export default function ReceberTicketScreen({ onBack }) {
   const { user } = useContext(AuthContext);
   const [showButton, setShowButton] = useState(false);
+  const [alreadyHas, setAlreadyHas] = useState(false);
+  const [geoAllowed, setGeoAllowed] = useState(null);
 
   const parseIntervalTime = (timeString) => {
     try {
@@ -46,10 +50,34 @@ export default function ReceberTicketScreen({ onBack }) {
     return () => clearInterval(timer);
   }, []);
 
-  const handleReceiveTicket = () => {
+  useEffect(() => {
+    (async () => {
+      if (!user) return;
+      const t = await Storage.getTicketForToday(user.id);
+      setAlreadyHas(!!t);
+    })();
+  }, [user]);
+
+  const handleReceiveTicket = async () => {
     try {
-      console.log('Ticket recebido para usuário:', user?.name || 'Usuário');
-      
+      if (!showButton) {
+        alert('Fora do horário para receber ticket.');
+        return;
+      }
+      const loc = await isInsideSchoolAsync();
+      setGeoAllowed(!!loc.inside);
+      if (!loc.inside) {
+        alert('Você precisa estar na escola para receber.');
+        return;
+      }
+      const current = await Storage.getTicketForToday(user.id);
+      if (current) {
+        setAlreadyHas(true);
+        alert('Você já possui um ticket para hoje.');
+        return;
+      }
+      await Storage.grantTicketForToday(user.id);
+      setAlreadyHas(true);
       alert('Ticket recebido com sucesso!');
     } catch (error) {
       console.error('Erro ao receber ticket:', error);
@@ -74,13 +102,16 @@ export default function ReceberTicketScreen({ onBack }) {
           </Text>
         </View>
 
-        {showButton && (
+        {showButton && !alreadyHas && (
           <TouchableOpacity style={styles.button} onPress={handleReceiveTicket}>
             <Text style={styles.buttonText}>Receber Ticket</Text>
           </TouchableOpacity>
         )}
         {!showButton && (
           <Text style={{ color: '#888', marginTop: 20 }}>Fora do horário para receber ticket.</Text>
+        )}
+        {alreadyHas && (
+          <Text style={{ color: '#0A7A3B', marginTop: 20 }}>Ticket disponível para hoje.</Text>
         )}
       </View>
     </SafeAreaView>

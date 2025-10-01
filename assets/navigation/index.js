@@ -8,6 +8,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ReceberTicketScreen from '../screens/ReceberTicketScreen';
 import CadastroAlunoScreen from '../screens/CadastroAlunoScreen';
 import LocationScreen from '../screens/LocationScreen';
+import Validation from '../screens/Validation';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -49,6 +50,9 @@ export default function AppNavigation() {
 	}
 	if (currentScreen === 'location') {
 		return <LocationScreen onBack={goBack} />;
+	}
+	if (currentScreen === 'validacao') {
+		return <Validation onBack={goBack} />;
 	}
 	
 	return <HomeScreen onNavigate={navigateToScreen} />;

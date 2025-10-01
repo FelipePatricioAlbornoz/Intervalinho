@@ -12,7 +12,7 @@ export default function LocationScreen({ onBack }) {
   const statusText = useMemo(() => {
     if (!locationInfo) return '—';
     return locationInfo.inside ? 'Você está na escola' : 'Você está fora da área permitida';
-  }, [locationInfo]);
+  }, [locationInwfo]);
 
   return (
     <SafeAreaView style={styles.container}>

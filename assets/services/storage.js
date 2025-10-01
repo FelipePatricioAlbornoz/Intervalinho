@@ -86,6 +86,50 @@ const setAuth = async (obj) => await write('auth', obj);
 const getTickets = async () => (await read('tickets')) || {};
 const setTickets = async (obj) => await write('tickets', obj);
 
+// --- Helpers de tickets por dia ---
+const dateKey = (d = new Date()) => d.toISOString().slice(0, 10); // YYYY-MM-DD
+
+const getDayTickets = async (key = dateKey()) => {
+  const all = await getTickets();
+  return all[key] || {};
+};
+
+const setDayTickets = async (ticketsForDay, key = dateKey()) => {
+  const all = await getTickets();
+  all[key] = ticketsForDay || {};
+  await setTickets(all);
+};
+
+const getTicketForToday = async (userId) => {
+  const day = await getDayTickets();
+  return day && userId != null ? day[String(userId)] || null : null;
+};
+
+const grantTicketForToday = async (userId) => {
+  if (userId == null) throw new Error('userId inválido');
+  const day = await getDayTickets();
+  if (day[String(userId)]) return day[String(userId)];
+  const entry = { status: 'available', ts: Date.now() };
+  day[String(userId)] = entry;
+  await setDayTickets(day);
+  return entry;
+};
+
+const markTicketUsed = async (userId) => {
+  if (userId == null) throw new Error('userId inválido');
+  const day = await getDayTickets();
+  const entry = day[String(userId)];
+  if (!entry) return null;
+  day[String(userId)] = { ...entry, status: 'used', usedAt: Date.now() };
+  await setDayTickets(day);
+  return day[String(userId)];
+};
+
+const listTodayTickets = async () => {
+  const day = await getDayTickets();
+  return Object.entries(day).map(([userId, data]) => ({ userId, ...data }));
+};
+
 const migrateUsersToHashed = async () => {
   const users = (await getUsers()) || [];
   const students = (await getStudents()) || [];
@@ -191,12 +235,12 @@ const resetAllData = async () => {
     
     if (keys.length > 0) {
       await AsyncStorage.multiRemove(keys);
-      console.log('✅ TODOS LOS DATOS BORRADOS');
+      console.log('TODOS LOS DATOS BORRADOS');
     }
     
     // Forzar limpieza completa
     await AsyncStorage.clear();
-    console.log('✅ STORAGE COMPLETAMENTE LIMPIO');
+    console.log('STORAGE COMPLETAMENTE LIMPIO');
     
     return true;
   } catch (error) {
@@ -218,6 +262,11 @@ export default {
   setAuth,
   getTickets,
   setTickets,
+  // tickets helpers
+  getTicketForToday,
+  grantTicketForToday,
+  markTicketUsed,
+  listTodayTickets,
   registerStudent,
   findUserByMatricula,
   verifyPassword,
