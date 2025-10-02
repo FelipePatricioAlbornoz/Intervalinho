@@ -18,7 +18,7 @@ export default function HomeScreen({ onNavigate }) {
         onNavigate('receber-ticket');
         break;
       case '2': // Intervalo
-        console.log('Navegar para tela de intervalo');
+        onNavigate('intervalo');
         break;
       case '3': // Localização
         onNavigate('location');

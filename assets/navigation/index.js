@@ -9,6 +9,7 @@ import ReceberTicketScreen from '../screens/ReceberTicketScreen';
 import CadastroAlunoScreen from '../screens/CadastroAlunoScreen';
 import LocationScreen from '../screens/LocationScreen';
 import Validation from '../screens/Validation';
+import IntervalScreen from '../screens/IntervalScreen';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -53,6 +54,9 @@ export default function AppNavigation() {
 	}
 	if (currentScreen === 'validacao') {
 		return <Validation onBack={goBack} />;
+	}
+	if (currentScreen === 'intervalo') {
+		return <IntervalScreen onBack={goBack} />;
 	}
 	
 	return <HomeScreen onNavigate={navigateToScreen} />;
