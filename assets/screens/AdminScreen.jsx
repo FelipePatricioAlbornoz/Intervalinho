@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList, Alert } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import storage from '../services/storage';
@@ -13,6 +13,23 @@ const adminButtons = [
 
 export default function AdminScreen({ onNavigate }) {
   const { user, signOut } = useContext(AuthContext);
+  const [todayTickets, setTodayTickets] = useState([]);
+  const [usersMap, setUsersMap] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const tickets = await storage.listTodayTickets();
+        setTodayTickets(tickets || []);
+        const users = await storage.getUsers();
+        const map = {};
+        (users || []).forEach(u => { map[String(u.id)] = u; });
+        setUsersMap(map);
+      } catch (e) {
+        console.warn('Erro ao listar tickets hoje', e);
+      }
+    })();
+  }, []);
 
   const resetAllData = async () => {
     Alert.alert(
@@ -68,6 +85,21 @@ export default function AdminScreen({ onNavigate }) {
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.buttonList}
       />
+
+      {/* Lista de tickets do dia */}
+      <View style={{ marginTop: 10 }}>
+        <Text style={{ fontWeight: '700', marginBottom: 8 }}>Tickets hoje</Text>
+        {todayTickets.length === 0 && <Text style={{ color: '#666' }}>Ninguém pegou ticket ainda.</Text>}
+        {todayTickets.map(t => {
+          const u = usersMap[String(t.userId)];
+          return (
+            <View key={String(t.userId)} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}>
+              <Text>{u ? `${u.name} (${u.matricula || u.id})` : String(t.userId)}</Text>
+              <Text style={{ color: t.status === 'used' ? '#D32F2F' : '#0A7A3B' }}>{t.status}</Text>
+            </View>
+          );
+        })}
+      </View>
       
       <TouchableOpacity 
         style={styles.resetButton} 
