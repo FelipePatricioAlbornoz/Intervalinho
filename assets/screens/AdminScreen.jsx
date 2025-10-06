@@ -44,8 +44,36 @@ export default function AdminScreen({ onNavigate }) {
             try {
               await storage.resetAllData();
               Alert.alert('Sucesso', 'Todos os dados foram apagados.');
+              // Refrescar lista
+              const tickets = await storage.listTodayTickets();
+              setTodayTickets(tickets || []);
             } catch (error) {
               Alert.alert('Erro', 'Não foi possível apagar os dados.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const resetTodayTickets = async () => {
+    Alert.alert(
+      'Resetar Tickets do Dia',
+      'Deseja realmente apagar todos os tickets de hoje? Isso não afeta alunos ou histórico.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Resetar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await storage.resetTodayTickets();
+              Alert.alert('Sucesso', 'Tickets do dia resetados.');
+              // Refrescar lista
+              const tickets = await storage.listTodayTickets();
+              setTodayTickets(tickets || []);
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível resetar os tickets do dia.');
             }
           }
         }
@@ -107,6 +135,12 @@ export default function AdminScreen({ onNavigate }) {
         })}
       </View>
       
+      <TouchableOpacity 
+        style={styles.resetButton} 
+        onPress={resetTodayTickets}
+      >
+        <Text style={styles.resetButtonText}>🔄 Resetar Tickets do Dia</Text>
+      </TouchableOpacity>
       <TouchableOpacity 
         style={styles.resetButton} 
         onPress={resetAllData}

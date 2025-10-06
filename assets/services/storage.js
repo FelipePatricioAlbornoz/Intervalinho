@@ -108,7 +108,9 @@ const getTicketForToday = async (userId) => {
 const grantTicketForToday = async (userId) => {
   if (userId == null) throw new Error('userId inválido');
   const day = await getDayTickets();
-  if (day[String(userId)]) return day[String(userId)];
+  if (day[String(userId)]) {
+    return day[String(userId)];
+  }
   const entry = { status: 'available', ts: Date.now() };
   day[String(userId)] = entry;
   await setDayTickets(day);
@@ -119,7 +121,8 @@ const markTicketUsed = async (userId) => {
   if (userId == null) throw new Error('userId inválido');
   const day = await getDayTickets();
   const entry = day[String(userId)];
-  if (!entry) return null;
+  if (!entry) throw new Error('Nenhum ticket disponível para este usuário hoje.');
+  if (entry.status === 'used') throw new Error('Ticket já foi usado.');
   day[String(userId)] = { ...entry, status: 'used', usedAt: Date.now() };
   await setDayTickets(day);
   return day[String(userId)];
@@ -232,25 +235,39 @@ const addStudent = async (student) => {
   return newStudent;
 };
 
+
+const resetTodayTickets = async () => {
+  try {
+    const all = await getTickets();
+    const today = dateKey();
+    if (all[today]) {
+      delete all[today];
+      await setTickets(all);
+    }
+    return true;
+  } catch (error) {
+    console.error('Error reseteando tickets do dia:', error);
+    return false;
+  }
+};
+
 const resetAllData = async () => {
   try {
     const keys = await AsyncStorage.getAllKeys();
-    console.log('Claves a borrar:', keys);
-    
     if (keys.length > 0) {
       await AsyncStorage.multiRemove(keys);
-      console.log('TODOS LOS DATOS BORRADOS');
     }
-    
-    // Forzar limpieza completa
     await AsyncStorage.clear();
-    console.log('STORAGE COMPLETAMENTE LIMPIO');
-    
     return true;
   } catch (error) {
     console.error('Error borrando datos:', error);
     return false;
   }
+};
+
+const getTicketsHistory = async () => {
+  const all = await getTickets();
+  return all;
 };
 
 export default {
@@ -266,7 +283,6 @@ export default {
   setAuth,
   getTickets,
   setTickets,
-  // tickets helpers
   getTicketForToday,
   grantTicketForToday,
   markTicketUsed,
@@ -275,4 +291,6 @@ export default {
   findUserByMatricula,
   verifyPassword,
   resetAllData,
+  resetTodayTickets,
+  getTicketsHistory,
 };

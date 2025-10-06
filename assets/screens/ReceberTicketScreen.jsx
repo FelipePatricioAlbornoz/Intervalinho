@@ -102,15 +102,42 @@ export default function ReceberTicketScreen({ onBack }) {
           </Text>
         </View>
 
-        {showButton && !alreadyHas && (
-          <TouchableOpacity style={styles.button} onPress={handleReceiveTicket}>
-            <Text style={styles.buttonText}>Receber Ticket</Text>
-          </TouchableOpacity>
-        )}
-        {!showButton && (
-          <Text style={{ color: '#888', marginTop: 20 }}>Fora do horário para receber ticket.</Text>
-        )}
-        {alreadyHas && (
+        {!alreadyHas ? (
+          <>
+            {showButton && (
+              <TouchableOpacity style={styles.button} onPress={handleReceiveTicket}>
+                <Text style={styles.buttonText}>Receber Ticket</Text>
+              </TouchableOpacity>
+            )}
+            {!showButton && (
+              <Text style={{ color: '#888', marginTop: 20 }}>Fora do horário para receber ticket.</Text>
+            )}
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#0A7A3B', marginTop: 16 }]} onPress={async () => {
+              try {
+                const loc = await isInsideSchoolAsync();
+                setGeoAllowed(!!loc.inside);
+                if (!loc.inside) {
+                  alert('Você precisa estar na escola para receber.');
+                  return;
+                }
+                const current = await Storage.getTicketForToday(user.id);
+                if (current) {
+                  setAlreadyHas(true);
+                  alert('Você já possui um ticket para hoje.');
+                  return;
+                }
+                await Storage.grantTicketForToday(user.id);
+                setAlreadyHas(true);
+                alert('Ticket recebido com sucesso! (Forçado)');
+              } catch (error) {
+                console.error('Erro ao receber ticket:', error);
+                alert('Erro ao receber ticket. Tente novamente.');
+              }
+            }}>
+              <Text style={styles.buttonText}>Receber Ticket (Forçar)</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
           <Text style={{ color: '#0A7A3B', marginTop: 20 }}>Ticket disponível para hoje.</Text>
         )}
       </View>
