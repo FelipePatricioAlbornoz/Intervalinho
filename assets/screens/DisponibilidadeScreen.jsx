@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList } from 'react-native';
 import storage from '../services/storage';
 
-export default function DisponibilidadeScreen({ onBack }) {
+export default function DisponibilidadeScreen({ onBack, onNavigateHistorico }) {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState({});
@@ -92,7 +92,7 @@ export default function DisponibilidadeScreen({ onBack }) {
 
       <View style={styles.historicHeader}>
         <Text style={styles.historicTitle}>Ver Histórico</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onNavigateHistorico}>
           <Text style={styles.historicButton}>{'>'}</Text>
         </TouchableOpacity>
       </View>

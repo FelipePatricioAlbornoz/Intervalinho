@@ -11,6 +11,7 @@ import LocationScreen from '../screens/LocationScreen';
 import Validation from '../screens/Validation';
 import IntervalScreen from '../screens/IntervalScreen';
 import DisponibilidadeScreen from '../screens/DisponibilidadeScreen';
+import HistoricoTicketsScreen from '../screens/HistoricoTicketsScreen';
 import ValidacaoTicketScreen from '../screens/ValidacaoTicketScreen';
 
 export default function AppNavigation() {
@@ -45,7 +46,10 @@ export default function AppNavigation() {
 			return <LocationScreen onBack={goBack} />;
 		}
 		if (currentScreen === 'disponibilidade') {
-			return <DisponibilidadeScreen onBack={goBack} />;
+			return <DisponibilidadeScreen onBack={goBack} onNavigateHistorico={() => setCurrentScreen('historico-tickets')} />;
+		}
+		if (currentScreen === 'historico-tickets') {
+			return <HistoricoTicketsScreen onBack={() => setCurrentScreen('disponibilidade')} />;
 		}
 		if (currentScreen === 'validacao') {
 			return <ValidacaoTicketScreen onBack={goBack} />;
