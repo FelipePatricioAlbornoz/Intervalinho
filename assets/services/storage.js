@@ -181,33 +181,37 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
   console.log('Usuarios existentes:', users.length);
   console.log('Estudiantes existentes:', students.length);
   
-  // Solo verificar si ya existe un usuario con el mismo rol Y matrícula
-  const exists = users.find(u => 
-    u.matricula && 
-    String(u.matricula) === String(matricula) && 
-    u.role === role
-  );
+  // Verificar si ya existe un usuario con la misma matrícula
+  const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
   
   console.log('Buscando usuario existente con:', { matricula, role });
   console.log('Usuario encontrado:', exists);
   
   if (exists) {
     console.log('ERROR: Usuario ya existe');
-    throw new Error(`Ya existe un ${role} con esa matrícula`);
+    throw new Error(`Já existe um usuário com essa matrícula`);
   }
-
-  let newId;
   
-  if (role === 'student') {
+  // Verificar el rol específicamente para administradores
+  if (role === 'admin') {
+    const adminCount = users.filter(u => u.role === 'admin').length;
+    if (adminCount >= 10) { // Aumentado a 10 administradores máximo
+      throw new Error('Número máximo de administradores (10) atingido');
+    }
+    // No agregar el admin a la lista de estudiantes
+    let newId = matricula; // Para admins, usamos la matrícula como ID
+  } else {
+    // Para estudiantes, seguimos con la lógica actual
     const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : 0));
     const maxId = numericIds.reduce((m, n) => (n > m ? n : m), 0);
-    newId = maxId + 1;
+    let newId = maxId + 1;
     const newStudent = { id: newId, name, matricula };
     students.push(newStudent);
     await write('students', students);
-  } else {
-    newId = matricula;
   }
+
+  // El ID se maneja en la sección anterior ahora
+  const newId = role === 'admin' ? matricula : students.length + 1;
 
   const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');

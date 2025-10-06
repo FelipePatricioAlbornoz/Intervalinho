@@ -30,6 +30,19 @@ export default function RegisterScreen({ onBack }) {
     setLoading(true);
     try {
       const role = roleAluno ? 'student' : 'admin';
+      
+      // Verificación adicional para administradores
+      if (!roleAluno) {
+        // Verificar si ya existe un admin con esta matrícula
+        const users = await storage.getUsers();
+        const adminExists = users.some(u => u.role === 'admin' && u.matricula === matricula);
+        if (adminExists) {
+          alert('Já existe um administrador com esta matrícula.');
+          setLoading(false);
+          return;
+        }
+      }
+      
       await storage.registerStudent({ name, matricula, password, role });
 
       alert('Usuário cadastrado com sucesso!\nAgora você pode fazer o login.');

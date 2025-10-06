@@ -60,6 +60,9 @@ export default function AdminScreen({ onNavigate }) {
         if (item.key === '4') {
           // Navegar para a tela de Cadastro de Aluno
           onNavigate('cadastro-aluno');
+        } else if (item.key === '5') {
+          // Navegar para a tela de Disponibilidade
+          onNavigate('disponibilidade');
         }
       }}
     >

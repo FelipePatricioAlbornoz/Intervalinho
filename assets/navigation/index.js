@@ -10,6 +10,7 @@ import CadastroAlunoScreen from '../screens/CadastroAlunoScreen';
 import LocationScreen from '../screens/LocationScreen';
 import Validation from '../screens/Validation';
 import IntervalScreen from '../screens/IntervalScreen';
+import DisponibilidadeScreen from '../screens/DisponibilidadeScreen';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -42,10 +43,12 @@ export default function AppNavigation() {
 		if (currentScreen === 'location') {
 			return <LocationScreen onBack={goBack} />;
 		}
+		if (currentScreen === 'disponibilidade') {
+			return <DisponibilidadeScreen onBack={goBack} />;
+		}
 		return <AdminScreen onNavigate={navigateToScreen} />;
 	}
 	
-	// Navegación para estudiantes
 	if (currentScreen === 'receber-ticket') {
 		return <ReceberTicketScreen onBack={goBack} />;
 	}
@@ -57,6 +60,9 @@ export default function AppNavigation() {
 	}
 	if (currentScreen === 'intervalo') {
 		return <IntervalScreen onBack={goBack} />;
+	}
+	if (currentScreen === 'disponibilidade') {
+		return <DisponibilidadeScreen onBack={goBack} />;
 	}
 	
 	return <HomeScreen onNavigate={navigateToScreen} />;

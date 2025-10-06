@@ -20,15 +20,7 @@ export function AuthProvider({ children }) {
 	}, []);
 
 	const signIn = async (matricula, password) => {
-		let userToLogin = null;
-
-		if (matricula.toLowerCase() === 'admin' && password === 'admin123') {
-			userToLogin = {
-				id: 'admin',
-				name: 'Administrador',
-				role: 'admin'
-			};
-		} else {
+		try {
 			const users = await storage.getUsers();
 			const userFound = users.find(u => u.matricula === matricula);
 
@@ -41,21 +33,20 @@ export function AuthProvider({ children }) {
 				throw new Error('Senha inválida');
 			}
 
-			userToLogin = {
+			const userToLogin = {
 				id: userFound.id,
 				name: userFound.name,
 				matricula: userFound.matricula,
 				role: userFound.role
 			};
-		}
 
-		if (userToLogin) {
 			setUser(userToLogin);
 			await storage.setAuth({ user: userToLogin });
 			return userToLogin;
+		} catch (error) {
+			console.error('Error en signIn:', error);
+			throw error;
 		}
-
-		throw new Error('Usuário não encontrado');
 	};
 
 	const signOut = async () => {
