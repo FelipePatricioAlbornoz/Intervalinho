@@ -57,7 +57,10 @@ export default function AdminScreen({ onNavigate }) {
     <TouchableOpacity 
       style={styles.button}
       onPress={() => {
-        if (item.key === '4') {
+        if (item.key === '1') {
+          // Navegar para a tela de Validação de Ticket
+          onNavigate('validacao');
+        } else if (item.key === '4') {
           // Navegar para a tela de Cadastro de Aluno
           onNavigate('cadastro-aluno');
         } else if (item.key === '5') {

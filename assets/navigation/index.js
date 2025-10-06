@@ -11,6 +11,7 @@ import LocationScreen from '../screens/LocationScreen';
 import Validation from '../screens/Validation';
 import IntervalScreen from '../screens/IntervalScreen';
 import DisponibilidadeScreen from '../screens/DisponibilidadeScreen';
+import ValidacaoTicketScreen from '../screens/ValidacaoTicketScreen';
 
 export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
@@ -45,6 +46,9 @@ export default function AppNavigation() {
 		}
 		if (currentScreen === 'disponibilidade') {
 			return <DisponibilidadeScreen onBack={goBack} />;
+		}
+		if (currentScreen === 'validacao') {
+			return <ValidacaoTicketScreen onBack={goBack} />;
 		}
 		return <AdminScreen onNavigate={navigateToScreen} />;
 	}
