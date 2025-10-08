@@ -3,16 +3,22 @@ import { isInsideSchoolAsync, simulateLocationInsideSchool, distanceInMeters } f
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { locationConfig } from '../constants/config';
 import LocationToggle from '../components/LocationToggle';
+import useLocationMockable from '../hooks/useLocationMockable';
 
-export default function LocationScreen({ onBack }) {
-  const [locationInfo, setLocationInfo] = useState(null);
+export default function LocationScreen({ onBack, navigation }) {
   const [loading, setLoading] = useState(false);
-  const [useMock, setUseMock] = useState(false);
+  const { 
+    location, 
+    errorMsg, 
+    isInSchool, 
+    mockEnabled, 
+    toggleMockLocation 
+  } = useLocationMockable();
 
   const statusText = useMemo(() => {
-    if (!locationInfo) return '—';
-    return locationInfo.inside ? 'Você está na escola' : 'Você está fora da área permitida';
-  }, [locationInfo]);
+    if (!location) return '—';
+    return isInSchool ? 'Você está na escola' : 'Você está fora da área permitida';
+  }, [location, isInSchool]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,28 +31,16 @@ export default function LocationScreen({ onBack }) {
       </View>
 
       <View style={styles.content}>
-        <LocationToggle useMock={useMock} onToggle={() => setUseMock(v => !v)} />
+        <LocationToggle useMock={mockEnabled} onToggle={toggleMockLocation} />
         <TouchableOpacity 
           style={styles.button} 
-          onPress={async () => {
-            setLoading(true);
-            let info;
-            if (useMock) {
-              const current = simulateLocationInsideSchool();
-              const dist = distanceInMeters(current, locationConfig.SCHOOL_COORDS);
-              info = { inside: dist <= locationConfig.SCHOOL_RADIUS_METERS, distance: dist, current };
-            } else {
-              info = await isInsideSchoolAsync();
-            }
-            setLocationInfo(info);
-            setLoading(false);
-          }}
+          onPress={() => setLoading(false)}
           disabled={loading}
         >
           <Text style={styles.buttonText}>{loading ? 'Verificando...' : 'Verificar Localização'}</Text>
         </TouchableOpacity>
 
-        {locationInfo && (
+        {location && (
           <View style={styles.resultsContainer}>
             <View style={styles.row}>
               <Text style={styles.dim}>---</Text>
@@ -55,34 +49,29 @@ export default function LocationScreen({ onBack }) {
             </View>
             <View style={styles.rowBetween}>
               <Text style={styles.label}>Latitude</Text>
-              <Text style={styles.value}>{locationInfo.current?.latitude?.toFixed(5)}</Text>
+              <Text style={styles.value}>{location.coords.latitude.toFixed(5)}</Text>
             </View>
             <View style={styles.rowBetween}>
               <Text style={styles.label}>Longitude</Text>
-              <Text style={styles.value}>{locationInfo.current?.longitude?.toFixed(5)}</Text>
+              <Text style={styles.value}>{location.coords.longitude.toFixed(5)}</Text>
             </View>
 
             <View style={[styles.rowBetween, { marginTop: 16 }]}>
               <Text style={styles.label}>STATUS</Text>
-              <Text style={[styles.statusText, locationInfo.inside ? styles.ok : styles.error]}>{statusText}</Text>
+              <Text style={[styles.statusText, isInSchool ? styles.ok : styles.error]}>{statusText}</Text>
             </View>
-            {locationInfo.distance != null && (
-              <Text style={styles.info}>
-                Distância até a escola: {locationInfo.distance.toFixed(0)} m
-              </Text>
-            )}
-            {locationInfo.error && (
-              <Text style={styles.errorText}>Erro: {locationInfo.error}</Text>
+            {errorMsg && (
+              <Text style={styles.errorText}>Erro: {errorMsg}</Text>
             )}
           </View>
         )}
 
         <TouchableOpacity
-          style={[styles.cta, !(locationInfo?.inside) && styles.ctaDisabled]}
-          disabled={!locationInfo?.inside}
-          onPress={() => alert('Receber ticket')}
+          style={[styles.cta, !isInSchool && styles.ctaDisabled]}
+          disabled={!isInSchool}
+          onPress={() => navigation.navigate('receber-ticket')}
         >
-          <Text style={[styles.ctaText, !(locationInfo?.inside) && styles.ctaTextDisabled]}>Receber ticket</Text>
+          <Text style={[styles.ctaText, !isInSchool && styles.ctaTextDisabled]}>Receber ticket</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

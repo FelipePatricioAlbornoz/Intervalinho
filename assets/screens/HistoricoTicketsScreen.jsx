@@ -42,7 +42,9 @@ export default function HistoricoTicketsScreen({ onBack }) {
           renderItem={({ item }) => (
             <View style={styles.row}>
               <Text style={styles.userId}>{item.userId}</Text>
-              <Text style={[styles.status, { color: item.status === 'used' ? '#D32F2F' : '#0A7A3B' }]}>{item.status}</Text>
+              <Text style={[styles.status, { color: item.status === 'used' ? '#D32F2F' : '#0A7A3B' }]}>
+                {item.status === 'used' ? 'usado' : 'concedido'}
+              </Text>
               <Text style={styles.time}>{item.ts ? new Date(item.ts).toLocaleTimeString() : ''}</Text>
             </View>
           )}

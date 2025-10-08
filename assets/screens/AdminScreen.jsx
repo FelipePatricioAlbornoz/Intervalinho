@@ -9,6 +9,7 @@ const adminButtons = [
   { key: '3', label: 'Localização' },
   { key: '4', label: 'Cadastrar Aluno' },
   { key: '5', label: 'Disponibilidade' },
+  { key: '6', label: 'Histórico de Tickets' },
 ];
 
 export default function AdminScreen({ onNavigate }) {
@@ -38,7 +39,7 @@ export default function AdminScreen({ onNavigate }) {
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'BORRAR TODO',
+          text: 'APAGAR TUDO',
           style: 'destructive',
           onPress: async () => {
             try {
@@ -86,14 +87,17 @@ export default function AdminScreen({ onNavigate }) {
       style={styles.button}
       onPress={() => {
         if (item.key === '1') {
-          // Navegar para a tela de Validação de Ticket
           onNavigate('validacao');
+        } else if (item.key === '2') {
+          onNavigate('intervalo');
+        } else if (item.key === '3') {
+          onNavigate('localizacao');
         } else if (item.key === '4') {
-          // Navegar para a tela de Cadastro de Aluno
           onNavigate('cadastro-aluno');
         } else if (item.key === '5') {
-          // Navegar para a tela de Disponibilidade
           onNavigate('disponibilidade');
+        } else if (item.key === '6') {
+          onNavigate('historico-tickets');
         }
       }}
     >
