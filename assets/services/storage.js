@@ -6,7 +6,6 @@ const read = async (key) => {
     const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
-    // Error al leer del storage.
     console.error('storage.read error', e);
     return null;
   }
@@ -26,56 +25,6 @@ const remove = async (key) => {
   } catch (e) {
     console.error('storage.remove error', e);
   }
-};
-
-// Función para inicializar con datos de prueba. No usar en producción.
-const initFromSeed = async (force = false) => {
-  const meta = (await read('meta')) || {};
-  if (!force && meta.seedApplied) {
-    await migrateUsersToHashed();
-    return;
-  }
-
-  let seed = null;
-  try {
-    seed = require('../../data/seed.json');
-  } catch (e) {
-    seed = null;
-  }
-
-  if (seed && seed.students) {
-    await write('students', seed.students);
-  } else {
-    await write('students', [
-      { id: 1, name: 'Aluno Demo', matricula: '2025001' },
-      { id: 2, name: 'Maria Silva', matricula: '2025002' },
-      { id: 3, name: 'João Souza', matricula: '2025003' },
-    ]);
-  }
-
-  const students = (await read('students')) || [];
-  const users = [];
-
-  const toHex = (bytes) => Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-  const hashPassword = async (password, saltHex) => {
-    const data = `${saltHex}:${password}`;
-    return await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, data);
-  };
-
-  const adminSalt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
-  const adminHash = await hashPassword('admin123', adminSalt);
-  users.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
-
-  for (const s of students) {
-    const salt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
-    const passwordHash = await hashPassword('1234', salt);
-    users.push({ id: s.id, name: s.name, role: 'student', matricula: s.matricula, passwordHash, salt });
-  }
-  await write('users', users);
-
-  // tickets vazios, porque ninguém comeu ainda
-  await write('tickets', {});
-  await write('meta', { seedApplied: true, ts: Date.now() });
 };
 
 const getStudents = async () => (await read('students')) || [];
@@ -184,7 +133,6 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
   console.log('Usuarios existentes:', users.length);
   console.log('Estudiantes existentes:', students.length);
   
-  // Verificar si ya existe un usuario con la misma matrícula
   const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
   
   console.log('Buscando usuario existente con:', { matricula, role });
@@ -195,16 +143,13 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
     throw new Error(`Já existe um usuário com essa matrícula`);
   }
   
-  // Verificar el rol específicamente para administradores
   if (role === 'admin') {
     const adminCount = users.filter(u => u.role === 'admin').length;
-    if (adminCount >= 10) { // Aumentado a 10 administradores máximo
+    if (adminCount >= 10) {
       throw new Error('Número máximo de administradores (10) atingido');
     }
-    // No agregar el admin a la lista de estudiantes
-    let newId = matricula; // Para admins, usamos la matrícula como ID
+    let newId = matricula;
   } else {
-    // Para estudiantes, seguimos con la lógica actual
     const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : 0));
     const maxId = numericIds.reduce((m, n) => (n > m ? n : m), 0);
     let newId = maxId + 1;
@@ -213,7 +158,6 @@ const registerStudent = async ({ name, matricula, password, role = 'student' }) 
     await write('students', students);
   }
 
-  // El ID se maneja en la sección anterior ahora
   const newId = role === 'admin' ? matricula : students.length + 1;
 
   const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
@@ -234,7 +178,6 @@ const addStudent = async (student) => {
   await write('students', students);
   return newStudent;
 };
-
 
 const resetTodayTickets = async () => {
   try {
@@ -274,7 +217,6 @@ export default {
   read,
   write,
   remove,
-  initFromSeed,
   getStudents,
   addStudent,
   getUsers,
