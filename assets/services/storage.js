@@ -95,13 +95,16 @@ const migrateUsersToHashed = async () => {
   };
 
   const newUsers = [];
-  // admin
-  const adminSalt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
-  const adminHash = await hashPassword('admin123', adminSalt);
-  newUsers.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
+  if (!users.length) {
+    const adminSaltBytes = await Crypto.getRandomBytesAsync(16);
+    const adminSalt = toHex(adminSaltBytes);
+    const adminHash = await hashPassword('admin123', adminSalt);
+    newUsers.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
+  }
 
   for (const s of students) {
-    const salt = toHex(Crypto.getRandomValues(new Uint8Array(16)));
+    const saltBytes = await Crypto.getRandomBytesAsync(16);
+    const salt = toHex(saltBytes);
     const passwordHash = await hashPassword('1234', salt);
     newUsers.push({ id: s.id, name: s.name, role: 'student', matricula: s.matricula, passwordHash, salt });
   }
@@ -121,46 +124,35 @@ const verifyPassword = async (user, password) => {
 };
 
 const registerStudent = async ({ name, matricula, password, role = 'student' }) => {
-  console.log('registerStudent llamado con:', { name, matricula, password, role });
-  
   if (!name || !matricula || !password) {
     throw new Error('Nome, matrícula e senha são obrigatórios');
   }
-  
+
   const students = (await getStudents()) || [];
   const users = (await getUsers()) || [];
-  
-  console.log('Usuarios existentes:', users.length);
-  console.log('Estudiantes existentes:', students.length);
-  
+
   const exists = users.find(u => u.matricula && String(u.matricula) === String(matricula));
-  
-  console.log('Buscando usuario existente con:', { matricula, role });
-  console.log('Usuario encontrado:', exists);
-  
   if (exists) {
-    console.log('ERROR: Usuario ya existe');
     throw new Error(`Já existe um usuário com essa matrícula`);
   }
-  
+
+  let newId;
   if (role === 'admin') {
     const adminCount = users.filter(u => u.role === 'admin').length;
     if (adminCount >= 10) {
       throw new Error('Número máximo de administradores (10) atingido');
     }
-    let newId = matricula;
+    newId = String(matricula);
   } else {
-    const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : 0));
+    const numericIds = students.map(s => (typeof s.id === 'number' ? s.id : Number(s.id) || 0));
     const maxId = numericIds.reduce((m, n) => (n > m ? n : m), 0);
-    let newId = maxId + 1;
+    newId = maxId + 1;
     const newStudent = { id: newId, name, matricula };
     students.push(newStudent);
     await write('students', students);
   }
 
-  const newId = role === 'admin' ? matricula : students.length + 1;
-
-  const saltBytes = Crypto.getRandomValues(new Uint8Array(16));
+  const saltBytes = await Crypto.getRandomBytesAsync(16);
   const saltHex = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
   const passwordHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${saltHex}:${password}`);
   users.push({ id: newId, name, role, matricula, passwordHash, salt: saltHex });
@@ -208,6 +200,43 @@ const resetAllData = async () => {
   }
 };
 
+const initFromSeed = async () => {
+  try {
+    const users = await getUsers();
+    const students = await getStudents();
+    if ((users && users.length) || (students && students.length)) return false; // ya inicializado
+    let seed = null;
+    try {
+      seed = require('../data/seed.json');
+    } catch (e) {
+      seed = null;
+    }
+    if (!seed) return false;
+
+    const seedStudents = seed.students || [];
+    await write('students', seedStudents);
+
+    const newUsers = [];
+    for (const s of seedStudents) {
+      const saltBytes = await Crypto.getRandomBytesAsync(16);
+      const salt = Array.from(saltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      const passwordHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${salt}:1234`);
+      newUsers.push({ id: s.id, name: s.name, role: 'student', matricula: s.matricula, passwordHash, salt });
+    }
+    if (!newUsers.some(u => u.role === 'admin')) {
+      const adminSaltBytes = await Crypto.getRandomBytesAsync(16);
+      const adminSalt = Array.from(adminSaltBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      const adminHash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${adminSalt}:admin123`);
+      newUsers.push({ id: 'admin', name: 'Administrador', role: 'admin', matricula: null, passwordHash: adminHash, salt: adminSalt });
+    }
+    await setUsers(newUsers);
+    return true;
+  } catch (error) {
+    console.error('initFromSeed error', error);
+    return false;
+  }
+};
+
 const getTicketsHistory = async () => {
   const all = await getTickets();
   return all;
@@ -233,6 +262,7 @@ export default {
   findUserByMatricula,
   verifyPassword,
   resetAllData,
+  initFromSeed,
   resetTodayTickets,
   getTicketsHistory,
 };
