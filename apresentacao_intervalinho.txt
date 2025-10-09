@@ -1,0 +1,46 @@
+Apresentação do Aplicativo Intervalinho
+
+Olá a todos! Meu nome é [Seu Nome] e hoje apresentarei o aplicativo Intervalinho, um projeto desenvolvido para [descreva brevemente o propósito do app, por exemplo, "gerenciar o acesso a refeitórios escolares" ou "controlar a distribuição de tickets"]. Este aplicativo foi construído com foco em uma experiência de usuário fluida e eficiente, operando de forma autônoma e segura.
+
+1. Parte Lógica e Estrutura do Aplicativo
+
+O Intervalinho é um aplicativo móvel desenvolvido utilizando **React Native**, o que permite a criação de interfaces de usuário nativas para iOS e Android a partir de uma única base de código JavaScript. A arquitetura do aplicativo é fortemente baseada em **componentes**, um padrão que promove a modularidade e a reutilização de código.
+
+*  **Componentes Reutilizáveis:** A interface é construída a partir de pequenos blocos independentes (como `LocationToggle`, `TicketCard`, `TimerDisplay`), que podem ser combinados para formar telas mais complexas. Isso facilita a manutenção e a escalabilidade do projeto.
+*   **Telas Dedicadas:** As diferentes funcionalidades do aplicativo são organizadas em telas específicas (e.g., `LoginScreen`, `HomeScreen`, `AdminScreen`), cada uma com sua própria lógica e apresentação.
+*   **Gerenciamento de Estado Global:** Para lidar com informações que precisam ser acessíveis em várias partes do aplicativo, como os dados do usuário autenticado, utilizamos a **React Context API**. Isso evita a necessidade de "prop drilling" (passar props manualmente por muitos níveis de componentes) e centraliza o estado em um local acessível a todos os componentes que precisam dele. O `AuthContext.js` é um exemplo chave, gerenciando o estado de autenticação e as funções de login/logout.
+
+2. "Backend" (Serviços e Lógica de Negócio)
+
+É importante notar que o Intervalinho opera como um aplicativo **offline-first**, o que significa que ele não depende de um servidor remoto para suas operações básicas. Em vez disso, a lógica de "backend" é implementada localmente no dispositivo do usuário, principalmente através do arquivo `storage.js`. Este arquivo atua como um serviço de dados local, gerenciando:
+
+*   **Gerenciamento de Usuários:**
+    *   **Registro e Autenticação:** Funções como `registerStudent` permitem o cadastro de novos usuários (alunos e administradores), enquanto `signIn` lida com o processo de autenticação.
+ *   **Segurança de Senhas:** As senhas não são armazenadas em texto simples. Utilizamos **hashing (SHA256)** e **salting** (adicionar um valor aleatório único a cada senha antes do hash) através da biblioteca `expo-crypto`. Isso garante que, mesmo que os dados sejam acessados, as senhas originais permaneçam protegidas. A função `verifyPassword` compara a senha fornecida com o hash armazenado para autenticação.
+    *   **Busca e Migração:** Funções para buscar usuários por matrícula (`findUserByMatricula`) e para migrar senhas antigas para o formato seguro com hash e salt (`migrateUsersToHashed`) também estão presentes.
+*   **Gerenciamento de Tickets:** O sistema controla a distribuição e o uso de tickets de acesso em uma base diária. Funções como `grantTicketForToday` (conceder ticket) e `markTicketUsed` (marcar ticket como usado) são essenciais para essa funcionalidade. Também é possível listar os tickets do dia (`listTodayTickets`) e acessar o histórico completo (`getTicketsHistory`).
+*   **Redefinição de Dados:** Para fins de manutenção ou redefinição, o aplicativo oferece funções para limpar tickets do dia atual (`resetTodayTickets`) ou todos os dados armazenados (`resetAllData`).
+
+3. Persistência de Dados
+
+A persistência dos dados no Intervalinho é realizada utilizando o **AsyncStorage** do React Native. O AsyncStorage é um sistema de armazenamento de chave-valor assíncrono e persistente, ideal para guardar pequenas quantidades de dados localmente no dispositivo do usuário.
+
+*   **Mecanismo de Armazenamento:** O `storage.js` abstrai a interação direta com o AsyncStorage através de funções como `read`, `write` e `remove`.
+    *   `read(key)`: Recupera dados, que são armazenados como strings JSON e convertidos de volta para objetos JavaScript.
+    *   `write(key, value)`: Salva dados, serializando objetos JavaScript para strings JSON antes do armazenamento.
+    *   `remove(key)`: Exclui dados específicos.
+*   **Dados Armazenados:** O AsyncStorage é utilizado para persistir informações cruciais, como:
+    *   Dados de usuários (incluindo hashes de senha e salts).
+    *   Estado de autenticação do usuário.
+    *   Registros de tickets de acesso, organizados por data.
+
+Essa abordagem garante que o aplicativo possa funcionar sem conexão à internet, mantendo a integridade e a disponibilidade dos dados essenciais.
+
+4. Métodos de Programação e Padrões de Design Aplicados
+
+Além da arquitetura baseada em componentes e do gerenciamento de estado, o projeto Intervalinho incorpora outros métodos e padrões importantes:
+
+*   **Programação Assíncrona (`async/await`):** Para garantir que a interface do usuário permaneça responsiva, todas as operações de I/O (entrada/saída), como a leitura e escrita no AsyncStorage, são tratadas de forma assíncrona usando `async/await`. Isso torna o código mais limpo e fácil de entender.
+*   **Modularização e Separação de Responsabilidades:** O código é cuidadosamente organizado em diretórios lógicos (`components`, `screens`, `services`, `context`, `constants`), onde cada um tem uma função bem definida. Isso melhora a organização, facilita a localização de funcionalidades e promove a colaboração entre desenvolvedores.
+*   **Segurança de Dados:** Como mencionado, o uso de hashing e salting para senhas é uma prática de segurança fundamental, protegendo as informações sensíveis dos usuários.
+*   **Navegação (React Navigation):** O aplicativo utiliza uma biblioteca de navegação robusta (provavelmente React Navigation) para gerenciar as transições entre as diferentes telas e a pilha de navegação, proporcionando uma experiência de usuário consistente.
