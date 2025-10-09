@@ -5,7 +5,7 @@ import { locationConfig } from '../constants/config';
 import LocationToggle from '../components/LocationToggle';
 import useLocationMockable from '../hooks/useLocationMockable';
 
-export default function LocationScreen({ onBack, navigation }) {
+export default function LocationScreen({ onBack }) {
   const [loading, setLoading] = useState(false);
   const { 
     location, 
@@ -69,7 +69,7 @@ export default function LocationScreen({ onBack, navigation }) {
         <TouchableOpacity
           style={[styles.cta, !isInSchool && styles.ctaDisabled]}
           disabled={!isInSchool}
-          onPress={() => navigation.navigate('receber-ticket')}
+          onPress={() => onBack ? onBack() : null}
         >
           <Text style={[styles.ctaText, !isInSchool && styles.ctaTextDisabled]}>Receber ticket</Text>
         </TouchableOpacity>

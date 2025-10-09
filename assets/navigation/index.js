@@ -41,7 +41,7 @@ export default function AppNavigation() {
 	if (user.role === 'admin') {
 		if (currentScreen === 'cadastro-aluno') {
 			return <CadastroAlunoScreen onBack={goBack} />;
-		}
+		}0
 		if (currentScreen === 'location') {
 			return <LocationScreen onBack={goBack} />;
 		}
@@ -61,7 +61,7 @@ export default function AppNavigation() {
 		return <ReceberTicketScreen onBack={goBack} />;
 	}
 	if (currentScreen === 'location') {
-		return <LocationScreen onBack={goBack} />;
+		return <LocationScreen onBack={() => setCurrentScreen('receber-ticket')} />;
 	}
 	if (currentScreen === 'validacao') {
 		return <Validation onBack={goBack} />;
