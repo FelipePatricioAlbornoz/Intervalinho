@@ -11,6 +11,8 @@
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
     "expo": "^54.0.9",
     "expo-crypto": "~15.0.7",
     "expo-install": "^0.0.0",
@@ -21,6 +23,8 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-maps": "^1.20.1",
+    "react-native-safe-area-context": "4.10.1",
+    "react-native-screens": "3.31.1",
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
