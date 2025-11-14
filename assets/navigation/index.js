@@ -8,7 +8,6 @@ import HomeScreen from '../screens/HomeScreen';
 import ReceberTicketScreen from '../screens/ReceberTicketScreen';
 import CadastroAlunoScreen from '../screens/CadastroAlunoScreen';
 import LocationScreen from '../screens/LocationScreen';
-import Validation from '../screens/Validation';
 import IntervalScreen from '../screens/IntervalScreen';
 import DisponibilidadeScreen from '../screens/DisponibilidadeScreen';
 import HistoricoTicketsScreen from '../screens/HistoricoTicketsScreen';
@@ -64,7 +63,7 @@ export default function AppNavigation() {
 		return <LocationScreen onBack={() => setCurrentScreen('receber-ticket')} />;
 	}
 	if (currentScreen === 'validacao') {
-		return <Validation onBack={goBack} />;
+		return <ValidacaoTicketScreen onBack={goBack} />;
 	}
 	if (currentScreen === 'intervalo') {
 		return <IntervalScreen onBack={goBack} />;
