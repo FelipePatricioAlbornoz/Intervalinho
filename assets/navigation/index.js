@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { ROUTES } from './routes';
+import useNavigation from '../hooks/useNavigation';
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -17,60 +19,54 @@ export default function AppNavigation() {
 	const { user, restoring } = useContext(AuthContext);
 	const [showSplash, setShowSplash] = useState(true);
 	const [showRegister, setShowRegister] = useState(false);
-	const [currentScreen, setCurrentScreen] = useState('home');
+	const { currentScreen, navigate, goBack } = useNavigation(ROUTES.HOME);
 
 	useEffect(() => {
 		const t = setTimeout(() => setShowSplash(false), 800);
 		return () => clearTimeout(t);
 	}, []);
 
-	const navigateToScreen = (screenName) => {
-		setCurrentScreen(screenName);
+	const toggleRegister = (show) => setShowRegister(show);
+
+	// Renderizar pantalla de estudiante
+	const renderStudentScreen = () => {
+		const studentScreens = {
+			[ROUTES.RECEBER_TICKET]: <ReceberTicketScreen onBack={goBack} />,
+			[ROUTES.LOCATION]: <LocationScreen onBack={() => navigate(ROUTES.RECEBER_TICKET)} />,
+			[ROUTES.VALIDACAO]: <ValidacaoTicketScreen onBack={goBack} />,
+			[ROUTES.INTERVALO]: <IntervalScreen onBack={goBack} />,
+			[ROUTES.DISPONIBILIDADE]: <DisponibilidadeScreen onBack={goBack} />,
+		};
+
+		return studentScreens[currentScreen] || <HomeScreen onNavigate={navigate} />;
 	};
 
-	const goBack = () => {
-		setCurrentScreen('home');
+	// Renderizar pantalla de administrador
+	const renderAdminScreen = () => {
+		const adminScreens = {
+			[ROUTES.CADASTRO_ALUNO]: <CadastroAlunoScreen onBack={goBack} />,
+			[ROUTES.LOCATION]: <LocationScreen onBack={goBack} />,
+			[ROUTES.DISPONIBILIDADE]: (
+				<DisponibilidadeScreen 
+					onBack={goBack} 
+					onNavigateHistorico={() => navigate(ROUTES.HISTORICO_TICKETS)} 
+				/>
+			),
+			[ROUTES.HISTORICO_TICKETS]: <HistoricoTicketsScreen onBack={() => navigate(ROUTES.DISPONIBILIDADE)} />,
+			[ROUTES.VALIDACAO]: <ValidacaoTicketScreen onBack={goBack} />,
+		};
+
+		return adminScreens[currentScreen] || <AdminScreen onNavigate={navigate} />;
 	};
 
+	// Lógica principal de pantallas
 	if (restoring || showSplash) return <SplashScreen />;
+	
 	if (!user) {
-		if (showRegister) return <RegisterScreen onBack={() => setShowRegister(false)} />;
-		return <LoginScreen onRegister={() => setShowRegister(true)} />;
+		return showRegister 
+			? <RegisterScreen onBack={() => toggleRegister(false)} />
+			: <LoginScreen onRegister={() => toggleRegister(true)} />;
 	}
-	if (user.role === 'admin') {
-		if (currentScreen === 'cadastro-aluno') {
-			return <CadastroAlunoScreen onBack={goBack} />;
-		}0
-		if (currentScreen === 'location') {
-			return <LocationScreen onBack={goBack} />;
-		}
-		if (currentScreen === 'disponibilidade') {
-			return <DisponibilidadeScreen onBack={goBack} onNavigateHistorico={() => setCurrentScreen('historico-tickets')} />;
-		}
-		if (currentScreen === 'historico-tickets') {
-			return <HistoricoTicketsScreen onBack={() => setCurrentScreen('disponibilidade')} />;
-		}
-		if (currentScreen === 'validacao') {
-			return <ValidacaoTicketScreen onBack={goBack} />;
-		}
-		return <AdminScreen onNavigate={navigateToScreen} />;
-	}
-	
-	if (currentScreen === 'receber-ticket') {
-		return <ReceberTicketScreen onBack={goBack} />;
-	}
-	if (currentScreen === 'location') {
-		return <LocationScreen onBack={() => setCurrentScreen('receber-ticket')} />;
-	}
-	if (currentScreen === 'validacao') {
-		return <ValidacaoTicketScreen onBack={goBack} />;
-	}
-	if (currentScreen === 'intervalo') {
-		return <IntervalScreen onBack={goBack} />;
-	}
-	if (currentScreen === 'disponibilidade') {
-		return <DisponibilidadeScreen onBack={goBack} />;
-	}
-	
-	return <HomeScreen onNavigate={navigateToScreen} />;
+
+	return user.role === 'admin' ? renderAdminScreen() : renderStudentScreen();
 }
