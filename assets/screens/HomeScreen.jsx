@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import ScreenLayout from '../components/ScreenLayout';
 
 const buttons = [
   { key: '1', label: 'Receber Ticket' },
@@ -41,14 +42,7 @@ export default function HomeScreen({ onNavigate }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.menuIcon}>☰</Text>
-        <View style={styles.profileIcon} />
-      </View>
-      
-      <Text style={styles.appName}>Intervalinho</Text>
-      <Text style={styles.homeIcon}></Text>
+    <ScreenLayout title="Intervalinho">
       <Text style={styles.welcome}>Bem vindo, {user?.name || 'Aluno'}</Text>
       
       <FlatList
@@ -61,44 +55,11 @@ export default function HomeScreen({ onNavigate }) {
       <TouchableOpacity style={styles.logoutButton} onPress={signOut}>
         <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: '#fff' 
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  menuIcon: {
-    fontSize: 20,
-    color: '#000',
-  },
-  appName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  profileIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#ddd',
-  },
-  homeIcon: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 20,
-    fontFamily: 'Courier',
-    lineHeight: 18,
-  },
   welcome: { 
     fontSize: 18, 
     fontWeight: '500', 

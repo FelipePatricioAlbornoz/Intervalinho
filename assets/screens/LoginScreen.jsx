@@ -1,6 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking, SafeAreaView, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import Logo from '../components/Logo';
 
 export default function LoginScreen({ onRegister }){
   const [matricula,setMatricula] = useState("")
@@ -25,7 +26,7 @@ export default function LoginScreen({ onRegister }){
   return(
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.appName}>Intervalinho</Text>
+        <Logo style={styles.logo} />
 
         <Text style={styles.subtitle}>Insira seu login</Text>
 
@@ -104,12 +105,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 24,
     paddingBottom: 32,
+    justifyContent: 'center',
   },
-  appName: {
-    fontSize: 24,
-    fontWeight: '700',
+  logo: {
     color: '#111111',
-    marginTop: 250,
+    marginBottom: 28,
   },
   subtitle: {
     marginTop: 28,
